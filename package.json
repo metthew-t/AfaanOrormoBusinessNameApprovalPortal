@@ -1,0 +1,21 @@
+{
+  "name": "afaan-oromo-business-portal",
+  "version": "1.0.0",
+  "description": "Afaan Oromo Business Name Approval Portal (AOBNAP) - Adama City",
+  "private": true,
+  "workspaces": [
+    "apps/backend",
+    "shared",
+    "database"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=apps/backend",
+    "start:backend": "npm run start --workspace=apps/backend",
+    "db:migrate": "npm run migrate --workspace=database",
+    "db:seed": "npm run seed --workspace=database",
+    "db:generate": "npx prisma generate --schema=database/prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "prisma": "^5.14.0"
+  }
+}

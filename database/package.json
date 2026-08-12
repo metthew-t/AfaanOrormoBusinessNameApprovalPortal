@@ -1,0 +1,21 @@
+{
+  "name": "@aobnap/database",
+  "version": "1.0.0",
+  "description": "AOBNAP database layer - Prisma schema, migrations, seeds",
+  "private": true,
+  "scripts": {
+    "migrate": "prisma migrate dev --schema=prisma/schema.prisma",
+    "migrate:deploy": "prisma migrate deploy --schema=prisma/schema.prisma",
+    "seed": "node prisma/seed/seed.js",
+    "generate": "prisma generate --schema=prisma/schema.prisma",
+    "studio": "prisma studio --schema=prisma/schema.prisma",
+    "reset": "prisma migrate reset --schema=prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "bcrypt": "^5.1.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.14.0"
+  }
+}

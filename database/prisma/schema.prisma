@@ -1,0 +1,279 @@
+// database/prisma/schema.prisma
+// AOBNAP — Afaan Oromo Business Name Approval Portal
+// Full migration-ready schema per architecture spec §7
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Roles ────────────────────────────────────────────────────────────────────
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique // BUSINESS_OWNER | FINANCIAL_OFFICER | LANGUAGE_OFFICER | SENIOR_OFFICER | ADMIN
+
+  users User[]
+
+  @@map("roles")
+}
+
+// ─── Users ────────────────────────────────────────────────────────────────────
+
+model User {
+  id             Int     @id @default(autoincrement())
+  fullName       String
+  email          String  @unique
+  phoneNumber    String? @unique
+  nationalIdRef  String?
+  passwordHash   String
+  roleId         Int
+  isActive       Boolean @default(true)
+
+  role                   Role                   @relation(fields: [roleId], references: [id])
+  applications           BusinessApplication[]  @relation("ApplicantApplications")
+  permissionReviews      BusinessPermission[]   @relation("PermissionReviewer")
+  languageReviews        LanguageReview[]       @relation("LanguageReviewer")
+  issuedCertificates     Certificate[]          @relation("CertificateIssuer")
+  notifications          Notification[]
+  auditLogs              AuditLog[]
+  identityVerifications  IdentityVerification[]
+  uploadedDocuments      UploadedDocument[]
+  reservedTermsCreated   ReservedTerm[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+// ─── Business Categories ──────────────────────────────────────────────────────
+
+model BusinessCategory {
+  id       Int     @id @default(autoincrement())
+  name     String
+  isActive Boolean @default(true)
+
+  applications BusinessApplication[]
+
+  @@map("business_categories")
+}
+
+// ─── Business Applications ────────────────────────────────────────────────────
+
+model BusinessApplication {
+  id                     Int       @id @default(autoincrement())
+  applicationNumber      String    @unique
+  applicantId            Int
+  proposedBusinessName   String
+  normalizedBusinessName String
+  businessCategoryId     Int
+  businessDescription    String
+  businessAddress        String
+  status                 String    // ApplicationStatus enum value
+  submittedAt            DateTime?
+
+  applicant        User             @relation("ApplicantApplications", fields: [applicantId], references: [id])
+  businessCategory BusinessCategory @relation(fields: [businessCategoryId], references: [id])
+  permission       BusinessPermission?
+  languageReview   LanguageReview?
+  documents        UploadedDocument[]
+  certificate      Certificate?
+  registryEntry    BusinessNameRegistry?
+  notifications    Notification[]   @relation("ApplicationNotifications")
+  identityVerifications IdentityVerification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([normalizedBusinessName])
+  @@index([status])
+  @@index([applicantId])
+  @@map("business_applications")
+}
+
+// ─── Business Permissions ─────────────────────────────────────────────────────
+
+model BusinessPermission {
+  id            Int       @id @default(autoincrement())
+  applicationId Int       @unique
+  documentId    Int?
+  status        String    // PermissionStatus enum value
+  reviewedById  Int?
+  reviewedAt    DateTime?
+  reviewComment String?
+
+  application BusinessApplication @relation(fields: [applicationId], references: [id])
+  reviewer    User?               @relation("PermissionReviewer", fields: [reviewedById], references: [id])
+  document    UploadedDocument?   @relation("PermissionDocument", fields: [documentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("business_permissions")
+}
+
+// ─── Language Reviews ─────────────────────────────────────────────────────────
+
+model LanguageReview {
+  id            Int       @id @default(autoincrement())
+  applicationId Int       @unique
+  status        String    // LanguageReviewStatus enum value
+  reviewedById  Int?
+  reviewedAt    DateTime?
+  reviewComment String?
+
+  application BusinessApplication @relation(fields: [applicationId], references: [id])
+  reviewer    User?               @relation("LanguageReviewer", fields: [reviewedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("language_reviews")
+}
+
+// ─── Business Name Registry ───────────────────────────────────────────────────
+
+model BusinessNameRegistry {
+  id                     Int     @id @default(autoincrement())
+  businessName           String
+  normalizedBusinessName String  @unique
+  source                 String  // HISTORICAL_IMPORT | MANUAL_ENTRY | NEW_APPROVAL
+  applicationId          Int?    @unique
+  approvalId             Int?
+  isActive               Boolean @default(true)
+
+  application BusinessApplication? @relation(fields: [applicationId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([normalizedBusinessName])
+  @@map("business_name_registry")
+}
+
+// ─── Certificates ─────────────────────────────────────────────────────────────
+
+model Certificate {
+  id            Int      @id @default(autoincrement())
+  applicationId Int      @unique
+  approvalNumber String  @unique
+  issuedById    Int
+  issuedAt      DateTime @default(now())
+  qrPayloadUrl  String
+  isValid       Boolean  @default(true)
+
+  application BusinessApplication @relation(fields: [applicationId], references: [id])
+  issuedBy    User               @relation("CertificateIssuer", fields: [issuedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("certificates")
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+model Notification {
+  id              Int     @id @default(autoincrement())
+  recipientId     Int
+  title           String
+  message         String
+  type            String  // NotificationType enum value
+  relatedEntityId Int?
+  applicationId   Int?
+  isRead          Boolean @default(false)
+
+  recipient   User                 @relation(fields: [recipientId], references: [id])
+  application BusinessApplication? @relation("ApplicationNotifications", fields: [applicationId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([recipientId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+// ─── Audit Logs ───────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id            Int    @id @default(autoincrement())
+  actorUserId   Int?
+  action        String // AuditAction enum value
+  entityType    String
+  entityId      Int?
+  previousValue Json?
+  newValue      Json?
+  ipAddress     String?
+
+  actor User? @relation(fields: [actorUserId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([actorUserId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ─── Reserved Terms ───────────────────────────────────────────────────────────
+
+model ReservedTerm {
+  id             Int    @id @default(autoincrement())
+  term           String
+  normalizedTerm String @unique
+  createdById    Int
+
+  createdBy User @relation(fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("reserved_terms")
+}
+
+// ─── Uploaded Documents ───────────────────────────────────────────────────────
+
+model UploadedDocument {
+  id               Int    @id @default(autoincrement())
+  applicationId    Int
+  documentType     String // BUSINESS_PERMISSION | APPEAL_SUPPORT | OTHER
+  originalFilename String
+  storedFilename   String
+  mimeType         String
+  fileSize         Int
+  storagePath      String
+  uploadedById     Int
+
+  application        BusinessApplication  @relation(fields: [applicationId], references: [id])
+  uploadedBy         User                 @relation(fields: [uploadedById], references: [id])
+  permissionDocument BusinessPermission[] @relation("PermissionDocument")
+
+  createdAt DateTime @default(now())
+
+  @@index([applicationId])
+  @@map("uploaded_documents")
+}
+
+// ─── Identity Verifications ───────────────────────────────────────────────────
+
+model IdentityVerification {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  applicationId Int?
+  provider      String    // MOCK | REAL
+  status        String    // VERIFIED | FAILED | PENDING
+  verifiedAt    DateTime?
+  referenceId   String?
+
+  user        User                 @relation(fields: [userId], references: [id])
+  application BusinessApplication? @relation(fields: [applicationId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("identity_verifications")
+}

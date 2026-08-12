@@ -1,0 +1,7 @@
+{
+  "name": "@aobnap/shared",
+  "version": "1.0.0",
+  "description": "AOBNAP shared constants and utilities",
+  "private": true,
+  "main": "index.js"
+}
