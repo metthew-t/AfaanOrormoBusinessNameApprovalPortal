@@ -1,0 +1,61 @@
+.page { max-width: 1200px; }
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+.header h1 { font-size: var(--font-size-2xl); font-weight: 700; margin-top: 4px; }
+.header p  { color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 2px; }
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.mainCol { display: flex; flex-direction: column; }
+.sideCol { position: sticky; top: calc(var(--navbar-height) + 16px); }
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.docCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-light);
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sideCol { position: static; }
+  .infoGrid { grid-template-columns: 1fr; }
+}

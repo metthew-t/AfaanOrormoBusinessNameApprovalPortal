@@ -1,0 +1,7 @@
+.page { max-width: 1200px; }
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-5);
+}

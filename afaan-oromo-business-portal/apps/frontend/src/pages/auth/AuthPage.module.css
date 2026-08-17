@@ -1,0 +1,331 @@
+/* ── Auth page wrapper ───────────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-bg);
+}
+
+/* ── Left panel ──────────────────────────────────────────────────── */
+.left {
+  width: 420px;
+  flex-shrink: 0;
+  background: var(--sidebar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-8);
+}
+
+.brandBox {
+  text-align: left;
+  max-width: 320px;
+}
+
+.brandIcon {
+  font-size: 48px;
+  margin-bottom: var(--space-4);
+}
+
+.brandName {
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+
+.brandFull {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+
+.brandSub {
+  font-size: var(--font-size-sm);
+  color: rgba(255,255,255,0.45);
+  margin-bottom: var(--space-8);
+}
+
+.featureList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: var(--space-6);
+}
+
+.featureItem {
+  font-size: var(--font-size-sm);
+  color: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  line-height: 1.5;
+}
+
+.featureCheckmark {
+  color: var(--color-success);
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Right panel ─────────────────────────────────────────────────── */
+.right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-6);
+  overflow-y: auto;
+}
+
+.formCard {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.formHeader { }
+
+.formTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.formSub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.forgotRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -8px;
+}
+
+.forgotLink {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.divider {
+  text-align: center;
+  position: relative;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.divider span {
+  position: relative;
+  background: var(--color-bg);
+  padding: 0 12px;
+}
+
+.signupLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 13px 20px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  background: var(--color-bg);
+}
+
+.signupLink:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.signupIcon {
+  font-size: 18px;
+}
+
+/* ── Demo credentials ────────────────────────────────────────────── */
+.demoBox {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid #a7f3d0;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-top: var(--space-2);
+}
+
+.demoTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #065f46;
+  margin-bottom: var(--space-1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.demoDescription {
+  font-size: var(--font-size-xs);
+  color: #047857;
+  margin-bottom: var(--space-4);
+}
+
+.demoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.demoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-3);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.demoItem:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #6ee7b7;
+  transform: translateX(2px);
+}
+
+.demoRole {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: #065f46;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.demoEmail {
+  font-size: var(--font-size-sm);
+  color: #047857;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+.demoPass {
+  font-size: var(--font-size-xs);
+  color: #065f46;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.demoPassword {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  border: 1px dashed #6ee7b7;
+}
+
+.demoPasswordLabel {
+  color: #065f46;
+  font-weight: 600;
+}
+
+.demoPasswordCode {
+  background: #ffffff;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #6ee7b7;
+  font-size: 12px;
+  font-weight: 700;
+  color: #059669;
+  font-family: 'Courier New', monospace;
+}
+
+.demoPasswordExample {
+  color: #047857;
+  font-style: italic;
+}
+
+/* ── Success card ────────────────────────────────────────────────── */
+.successCard {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10) var(--space-8);
+  text-align: center;
+  max-width: 420px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.successIcon {
+  width: 64px;
+  height: 64px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.successCard h2 {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.successCard p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .left { display: none; }
+  .right { padding: var(--space-6) var(--space-4); }
+}
+
+@media (max-width: 560px) {
+  .formRow { grid-template-columns: 1fr; }
+  .formCard { max-width: 100%; }
+}

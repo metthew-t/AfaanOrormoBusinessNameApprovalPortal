@@ -1,0 +1,48 @@
+.page { max-width: 860px; }
+.list { display: flex; flex-direction: column; gap: var(--space-4); }
+.corrHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+.corrHeader h3 { font-size: var(--font-size-lg); font-weight: 700; }
+.corrHeader p  { font-size: var(--font-size-sm); color: var(--color-text-muted); margin-top: 2px; }
+.corrActions { display: flex; align-items: center; gap: var(--space-3); }
+.reasonBox {
+  background: var(--color-warning-bg);
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.reasonLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-warning);
+  margin-bottom: 6px;
+}
+.reasonText { font-size: var(--font-size-sm); color: var(--color-text-primary); line-height: 1.6; }
+.corrMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+.viewApp {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  margin-left: auto;
+}
+.modalBody { display: flex; flex-direction: column; gap: var(--space-3); }
