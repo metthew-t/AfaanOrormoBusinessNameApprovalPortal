@@ -1,0 +1,271 @@
+/* ── Admin Dashboard ────────────────────────────────────────────── */
+.dashboard {
+  max-width: 1400px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+/* ── Quick Actions ──────────────────────────────────────────────── */
+.quickActions {
+  margin-bottom: var(--space-8);
+}
+
+.quickActions h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.actionCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: white;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+}
+
+.actionCard:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.actionIcon {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.actionContent h4 {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.actionContent p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* ── Department Activity ────────────────────────────────────────── */
+.departmentActivity {
+  margin-bottom: var(--space-8);
+}
+
+.departmentActivity h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.departmentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.deptCard {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: all var(--transition-fast);
+}
+
+.deptCard:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
+}
+
+.deptHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.deptIcon {
+  font-size: 28px;
+}
+
+.deptHeader h4 {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.deptStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.deptStat {
+  text-align: center;
+  padding: var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.deptStatValue {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.deptStatLabel {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── System Health ──────────────────────────────────────────────── */
+.systemHealth {
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.systemHealth h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-5);
+}
+
+.healthGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.healthCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.healthIndicator {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.healthIndicator[data-status="HEALTHY"],
+.healthIndicator[data-status="OPERATIONAL"] {
+  background: var(--color-success-bg);
+}
+
+.healthIndicator[data-status="DEGRADED"],
+.healthIndicator[data-status="WARNING"] {
+  background: var(--color-warning-bg);
+}
+
+.healthIndicator[data-status="DOWN"],
+.healthIndicator[data-status="ERROR"] {
+  background: var(--color-danger-bg);
+}
+
+.healthDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: block;
+}
+
+.healthIndicator[data-status="HEALTHY"] .healthDot,
+.healthIndicator[data-status="OPERATIONAL"] .healthDot {
+  background: var(--color-success);
+  box-shadow: 0 0 8px var(--color-success);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.healthIndicator[data-status="DEGRADED"] .healthDot,
+.healthIndicator[data-status="WARNING"] .healthDot {
+  background: var(--color-warning);
+  box-shadow: 0 0 8px var(--color-warning);
+}
+
+.healthIndicator[data-status="DOWN"] .healthDot,
+.healthIndicator[data-status="ERROR"] .healthDot {
+  background: var(--color-danger);
+  box-shadow: 0 0 8px var(--color-danger);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.healthCard h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.healthStatus {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .actionsGrid,
+  .departmentGrid,
+  .healthGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .deptStats {
+    grid-template-columns: 1fr;
+  }
+}

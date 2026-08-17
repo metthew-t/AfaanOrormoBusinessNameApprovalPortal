@@ -1,0 +1,217 @@
+/* ── Commercial Review Detail Page ──────────────────────────────── */
+.page {
+  max-width: 1400px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-6);
+}
+
+.header h1 {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-top: var(--space-2);
+  margin-bottom: 4px;
+}
+
+.appNumber {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-6);
+}
+
+.mainColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Document Box ───────────────────────────────────────────────── */
+.documentBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 2px solid var(--color-info);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+}
+
+.documentIcon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.documentInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.documentInfo h3 {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.documentMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-bottom: 2px;
+}
+
+.documentSize {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
+}
+
+/* ── Review Checklist ───────────────────────────────────────────── */
+.reviewChecklist {
+  padding: var(--space-5);
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+}
+
+.checklistTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-4);
+}
+
+.checklistGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.checklistItem {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.checklistIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.checklistItem h4 {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.checklistItem p {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ── Actions ────────────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Detail Fields ──────────────────────────────────────────────── */
+.detailField {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detailField:last-child {
+  border-bottom: none;
+}
+
+.detailLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.detailValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ── Confirmation Dialog Content ────────────────────────────────── */
+.confirmContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.confirmMessage {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.confirmMessage p {
+  margin-bottom: var(--space-3);
+}
+
+.confirmMessage strong {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: -1;
+  }
+
+  .checklistGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .documentBox {
+    flex-direction: column;
+    text-align: center;
+  }
+}

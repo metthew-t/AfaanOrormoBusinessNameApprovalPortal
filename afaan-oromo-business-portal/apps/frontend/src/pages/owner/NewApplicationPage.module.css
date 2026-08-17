@@ -1,0 +1,180 @@
+.page { max-width: 860px; }
+.header { margin-bottom: var(--space-6); }
+.header h1 { font-size: var(--font-size-2xl); font-weight: 700; }
+.header p  { color: var(--color-text-secondary); margin-top: 4px; }
+
+/* ── Stepper ─────────────────────────────────────────────────────── */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: var(--space-6);
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.stepItem:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -8px;
+  color: var(--color-text-light);
+  font-size: 14px;
+}
+
+.stepCircle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.stepActive .stepCircle {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+}
+
+.stepDone .stepCircle {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.stepLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.stepActive .stepLabel {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.stepDone .stepLabel {
+  color: var(--color-success);
+}
+
+/* ── Step content ────────────────────────────────────────────────── */
+.stepContent { display: flex; flex-direction: column; gap: var(--space-5); }
+
+.stepTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.stepDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.stepFooter {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ── Validation ──────────────────────────────────────────────────── */
+.nameToValidate {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+.nameLabel { font-size: var(--font-size-sm); color: var(--color-text-muted); font-weight: 500; }
+.nameValue { font-size: var(--font-size-base); font-weight: 600; color: var(--color-text-primary); }
+
+.validationResults {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.validationHeader {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.validPass { background: var(--color-success-bg); color: var(--color-success); }
+.validFail { background: var(--color-danger-bg);  color: var(--color-danger);  }
+
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.checkPass { color: var(--color-success); }
+.checkFail { color: var(--color-danger); }
+
+.revalidate {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  background: none;
+  border: none;
+  border-top: 1px solid var(--color-border-light);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  text-align: center;
+  transition: background var(--transition-fast);
+}
+.revalidate:hover { background: var(--color-primary-light); }
+
+/* ── Review grid ─────────────────────────────────────────────────── */
+.reviewGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .formGrid, .reviewGrid { grid-template-columns: 1fr; }
+  .stepLabel { display: none; }
+}

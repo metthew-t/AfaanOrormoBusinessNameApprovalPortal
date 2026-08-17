@@ -1,0 +1,150 @@
+/* ── Incoming Applications Page ─────────────────────────────────── */
+.page {
+  max-width: 1400px;
+}
+
+/* ── Route Modal ────────────────────────────────────────────────── */
+.routeModalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.appSummary {
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-primary);
+}
+
+.appSummary h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.appNumber {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
+  margin-bottom: 8px;
+}
+
+.appOwner {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.routingPlan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.routingTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.routingItem {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: #ffffff;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.routingIcon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.routingDetails {
+  flex: 1;
+}
+
+.routingDetails h4 {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 4px;
+}
+
+.routingDetails > p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.routingContent {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.routingContent strong {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.routingContent p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+/* ── Icon Buttons ───────────────────────────────────────────────── */
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2);
+  transition: transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton:hover {
+  transform: scale(1.2);
+}
+
+.iconButton:active {
+  transform: scale(0.95);
+}
+
+/* ── Decision Modal ─────────────────────────────────────────────── */
+.decisionModalContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-2);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .routingItem {
+    flex-direction: column;
+  }
+
+  .modalActions {
+    flex-direction: column-reverse;
+  }
+}

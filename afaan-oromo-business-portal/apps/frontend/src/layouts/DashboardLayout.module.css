@@ -1,0 +1,43 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-bg);
+  position: relative;
+}
+
+/* Main area: pushes right of the fixed sidebar */
+.main {
+  flex: 1;
+  min-width: 0;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-6);
+  overflow-x: hidden;
+}
+
+/* Mobile overlay behind drawer */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: calc(var(--z-sidebar) - 1);
+  animation: fadeIn 0.2s ease;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .main {
+    margin-left: 0;
+  }
+  .content {
+    padding: var(--space-4);
+  }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

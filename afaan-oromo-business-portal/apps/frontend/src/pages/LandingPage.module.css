@@ -1,0 +1,570 @@
+/* ── Landing Page Base ──────────────────────────────────────────── */
+.landing {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Navigation Bar ─────────────────────────────────────────────── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-4) 0;
+}
+
+.navContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navBrand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+}
+
+.navIcon {
+  font-size: 28px;
+}
+
+.navTitle {
+  letter-spacing: 0.05em;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.navLink {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* ── Hero Section ───────────────────────────────────────────────── */
+.hero {
+  padding: var(--space-20) var(--space-6) var(--space-24);
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-12);
+}
+
+.heroContent {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  margin-bottom: var(--space-6);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badgeIcon {
+  font-size: var(--font-size-base);
+}
+
+.heroTitle {
+  font-size: 56px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+  margin-bottom: var(--space-5);
+  letter-spacing: -0.02em;
+}
+
+.heroTitleHighlight {
+  color: var(--color-primary);
+}
+
+.heroSubtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  max-width: 720px;
+  margin: 0 auto var(--space-8);
+}
+
+.heroButtons {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+  flex-wrap: wrap;
+}
+
+.heroStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-border);
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statValue {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.statLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* ── Section Common Styles ──────────────────────────────────────── */
+.sectionContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-20) var(--space-6);
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: var(--space-12);
+}
+
+.sectionTitle {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.01em;
+}
+
+.sectionSubtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Features Section ───────────────────────────────────────────── */
+.features {
+  background: #ffffff;
+  padding: var(--space-12) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.featureCard {
+  padding: var(--space-8);
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.featureCard:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary);
+  transform: translateY(-4px);
+}
+
+.featureIcon {
+  font-size: 42px;
+  margin-bottom: var(--space-4);
+}
+
+.featureTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.featureDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* ── User Roles Section ─────────────────────────────────────────── */
+.roles {
+  background: #f8f9ff;
+  padding: var(--space-12) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rolesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+}
+
+.roleCard {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  transition: all var(--transition-fast);
+}
+
+.roleCard:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
+}
+
+.roleHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.roleIcon {
+  font-size: 32px;
+}
+
+.roleTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.roleFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.roleFeatures li {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  padding-left: 24px;
+  position: relative;
+}
+
+.roleFeatures li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* ── Benefits Section ───────────────────────────────────────────── */
+.benefits {
+  background: #ffffff;
+  padding: var(--space-12) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.benefitsContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+.benefitsTitle {
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-8);
+  letter-spacing: -0.01em;
+}
+
+.benefitsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.benefitItem {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.benefitIcon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.benefitItem h4 {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.benefitItem p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.benefitsImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.benefitsImagePlaceholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.benefitsImageIcon {
+  font-size: 120px;
+  opacity: 0.4;
+}
+
+/* ── CTA Section (Guaranteed Free Space Above & Below) ────────── */
+.cta {
+  background: #ffffff;
+  padding: 20px var(--space-6);
+  text-align: center;
+}
+
+.ctaContent {
+  max-width: 900px;
+  margin: 80px auto; /* 80px space explicitly forced at the top AND bottom */
+  background: linear-gradient(135deg, var(--color-primary) 0%, #059669 100%);
+  padding: var(--space-16) var(--space-8);
+  border-radius: var(--radius-2xl, 24px);
+  box-shadow: var(--shadow-xl);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaTitle {
+  font-size: 42px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.01em;
+}
+
+.ctaSubtitle {
+  font-size: var(--font-size-lg);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: var(--space-8);
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaButtons {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.footer {
+  background: #111827;
+  color: rgba(255, 255, 255, 0.8);
+  padding: var(--space-16) var(--space-6) var(--space-8);
+}
+
+.footerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+.footerSection {
+}
+
+.footerBrand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.footerIcon {
+  font-size: 32px;
+}
+
+.footerTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+}
+
+.footerDescription {
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footerHeading {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: var(--space-4);
+}
+
+.footerLinks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footerLinks li,
+.footerLinks a {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+  transition: color var(--transition-fast);
+}
+
+.footerLinks a:hover {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.footerBottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: var(--space-8);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .heroTitle {
+    font-size: 42px;
+  }
+
+  .sectionTitle {
+    font-size: 36px;
+  }
+
+  .featureGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .benefitsContent {
+    grid-template-columns: 1fr;
+  }
+
+  .benefitsImage {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 32px;
+  }
+
+  .heroSubtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .heroStats {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .rolesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .footerContent {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ctaTitle {
+    font-size: 32px;
+  }
+
+  .navContainer {
+    padding: 0 var(--space-4);
+  }
+
+  .heroButtons {
+    flex-direction: column;
+  }
+
+  .heroButtons a {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerContent {
+    grid-template-columns: 1fr;
+  }
+
+  .navBrand {
+    font-size: var(--font-size-lg);
+  }
+
+  .navIcon {
+    font-size: 24px;
+  }
+}

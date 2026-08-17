@@ -1,0 +1,109 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  text-decoration: none;
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ── Sizes ──────────────────────────────────────────────────────── */
+.sm { padding: 6px 14px;  font-size: var(--font-size-xs); }
+.md { padding: 10px 20px; font-size: var(--font-size-sm); }
+.lg { padding: 13px 28px; font-size: var(--font-size-base); }
+
+/* ── Variants ────────────────────────────────────────────────────── */
+.primary {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 1px 3px rgba(26,107,60,0.3);
+}
+.primary:hover:not(:disabled) { background: var(--color-primary-dark); }
+
+.secondary {
+  background: white;
+  color: var(--color-text-secondary);
+  border: 1.5px solid var(--color-border);
+}
+.secondary:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.danger {
+  background: var(--color-danger);
+  color: white;
+}
+.danger:hover:not(:disabled) { background: #991b1b; }
+
+.ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: none;
+  box-shadow: none;
+}
+.ghost:hover:not(:disabled) {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+.success {
+  background: var(--color-success);
+  color: white;
+}
+.success:hover:not(:disabled) { background: #14532d; }
+
+.warning {
+  background: var(--color-warning);
+  color: white;
+}
+.warning:hover:not(:disabled) { background: #92400e; }
+
+/* ── States ─────────────────────────────────────────────────────── */
+.btn:disabled,
+.loading {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.fullWidth { width: 100%; }
+
+/* ── Icon helpers ────────────────────────────────────────────────── */
+.iconLeft,
+.iconRight {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.1em;
+}
+
+/* ── Spinner ─────────────────────────────────────────────────────── */
+.spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.secondary .spinner,
+.ghost .spinner {
+  border-color: rgba(0,0,0,0.15);
+  border-top-color: var(--color-primary);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

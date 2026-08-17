@@ -1,0 +1,58 @@
+// Mock notifications data
+
+export const MOCK_NOTIFICATIONS = [
+  {
+    id: 'notif-001',
+    title: 'Application Submitted',
+    message: 'Your application AOB-2026-0002 has been submitted successfully.',
+    type: 'SUCCESS',
+    read: false,
+    createdAt: '2026-08-10T10:00:00.000Z',
+    link: '/owner/applications/APP-002',
+  },
+  {
+    id: 'notif-002',
+    title: 'Correction Required',
+    message: 'Application AOB-2026-0003 requires a correction. Please review and resubmit.',
+    type: 'WARNING',
+    read: false,
+    createdAt: '2026-08-09T14:00:00.000Z',
+    link: '/owner/corrections',
+  },
+  {
+    id: 'notif-003',
+    title: 'Business Name Approved',
+    message: 'Congratulations! Your business name "Baqqalaa Nagaa Daldala PLC" has been approved.',
+    type: 'SUCCESS',
+    read: true,
+    createdAt: '2026-01-20T08:00:00.000Z',
+    link: '/owner/certificates',
+  },
+  {
+    id: 'notif-004',
+    title: 'Permission Approved',
+    message: 'Financial officer has approved your business permission for AOB-2026-0002.',
+    type: 'INFO',
+    read: true,
+    createdAt: '2026-02-12T09:00:00.000Z',
+    link: '/owner/applications/APP-002',
+  },
+  {
+    id: 'notif-005',
+    title: 'Language Review Rejected',
+    message: 'Application AOB-2026-0005 was rejected at language review stage.',
+    type: 'DANGER',
+    read: false,
+    createdAt: '2026-04-15T10:00:00.000Z',
+    link: '/owner/applications/APP-005',
+  },
+  {
+    id: 'notif-006',
+    title: 'Appeal Submitted',
+    message: 'Your appeal for AOB-2026-0005 has been submitted and is under review.',
+    type: 'INFO',
+    read: true,
+    createdAt: '2026-04-20T09:00:00.000Z',
+    link: '/owner/appeals',
+  },
+];
