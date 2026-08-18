@@ -2,7 +2,7 @@
 // Financial Officer permission review logic
 
 const prisma = require('../../config/database');
-const { APPLICATION_STATUS, PERMISSION_STATUS, LANGUAGE_REVIEW_STATUS, NOTIFICATION_TYPE } = require('../../../../shared/constants/statuses');
+const { APPLICATION_STATUS, PERMISSION_STATUS, LANGUAGE_REVIEW_STATUS, NOTIFICATION_TYPE } = require('../../../../../shared/constants/statuses');
 const { writeAuditLog, writeAuditLogInTransaction } = require('../auditLogs/auditLog.service');
 const { createNotification } = require('../notifications/notification.service');
 

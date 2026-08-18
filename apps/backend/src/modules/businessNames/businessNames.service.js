@@ -6,7 +6,7 @@ const prisma = require('../../config/database');
 const {
   normalizeBusinessName,
   validateBusinessNameFormat,
-} = require('../../../../shared/utils/normalizeBusinessName');
+} = require('../../../../../shared/utils/normalizeBusinessName');
 
 /**
  * Runs all 6 automatic validation checks against a proposed business name.
@@ -61,41 +61,44 @@ async function validateBusinessName(proposedName, excludeApplicationId = null) {
 
   // Step 4: Exact/normalized duplicate — against business_name_registry
   const registryMatch = await prisma.businessNameRegistry.findFirst({
-    where: {
-      normalizedBusinessName: normalizedName,
-      isActive: true,
-    },
+    where: { normalizedName },
   });
 
   if (registryMatch) {
-    checks.exactDuplicate = registryMatch.businessName === proposedName.trim();
-    checks.normalizedDuplicate = true;
-    reasons.push('Maqaan daldalaa kun duraan galmaa\'ee jira.');
+    if (registryMatch.originalName.toLowerCase() === proposedName.toLowerCase()) {
+      checks.exactDuplicate = true;
+      reasons.push('Maqaan kun sirumatti kanaan dura galmaa\'ee jira.');
+    } else {
+      checks.normalizedDuplicate = true;
+      reasons.push(`Maqaan kun kan kanaan dura galmaa'e "${registryMatch.originalName}" wajjiin tokko.`);
+    }
   }
 
   // Step 5: Pending duplicate — same normalized name in another active application
-  if (!registryMatch) {
-    const ACTIVE_STATUSES = [
-      'SUBMITTED',
-      'PERMISSION_PENDING',
-      'PERMISSION_CORRECTION_REQUIRED',
-      'PERMISSION_APPROVED',
-      'LANGUAGE_REVIEW_PENDING',
-      'LANGUAGE_CORRECTION_REQUIRED',
-    ];
+  const pendingWhere = {
+    normalizedBusinessName: normalizedName,
+    status: {
+      in: [
+        'SUBMITTED',
+        'PERMISSION_PENDING',
+        'PERMISSION_CORRECTION_REQUIRED',
+        'LANGUAGE_REVIEW_PENDING',
+        'LANGUAGE_CORRECTION_REQUIRED',
+      ],
+    },
+  };
+  
+  if (excludeApplicationId) {
+    pendingWhere.id = { not: parseInt(excludeApplicationId, 10) };
+  }
 
-    const pendingMatch = await prisma.businessApplication.findFirst({
-      where: {
-        normalizedBusinessName: normalizedName,
-        status: { in: ACTIVE_STATUSES },
-        ...(excludeApplicationId ? { id: { not: excludeApplicationId } } : {}),
-      },
-    });
+  const pendingMatch = await prisma.businessApplication.findFirst({
+    where: pendingWhere,
+  });
 
-    if (pendingMatch) {
-      checks.pendingDuplicate = true;
-      reasons.push('Maqaan daldalaa kun iyyata biraa keessatti eerameera.');
-    }
+  if (pendingMatch) {
+    checks.pendingDuplicate = true;
+    reasons.push('Maqaan kun iyyata biraa keessatti adeemsarra jira.');
   }
 
   // Step 6: Reserved/prohibited term

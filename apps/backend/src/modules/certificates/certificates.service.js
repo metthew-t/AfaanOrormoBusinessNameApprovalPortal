@@ -2,7 +2,7 @@
 
 const QRCode = require('qrcode');
 const prisma = require('../../config/database');
-const { ROLES } = require('../../../../shared/constants/roles');
+const { ROLES } = require('../../../../../shared/constants/roles');
 
 const CERT_INCLUDE = {
   application: {

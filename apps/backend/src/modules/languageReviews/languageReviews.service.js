@@ -9,7 +9,7 @@ const {
   PERMISSION_STATUS,
   REGISTRY_SOURCE,
   NOTIFICATION_TYPE,
-} = require('../../../../shared/constants/statuses');
+} = require('../../../../../shared/constants/statuses');
 const { writeAuditLog, writeAuditLogInTransaction } = require('../auditLogs/auditLog.service');
 const { createNotification } = require('../notifications/notification.service');
 const env = require('../../config/env');

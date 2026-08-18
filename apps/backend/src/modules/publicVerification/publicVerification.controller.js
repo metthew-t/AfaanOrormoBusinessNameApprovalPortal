@@ -2,7 +2,7 @@
 // No auth required — returns only whitelisted public fields (no PII, no internal data)
 
 const prisma = require('../../config/database');
-const { normalizeBusinessName } = require('../../../../shared/utils/normalizeBusinessName');
+const { normalizeBusinessName } = require('../../../../../shared/utils/normalizeBusinessName');
 
 /** GET /api/public/business-names/search?q=... */
 async function searchBusinessNames(req, res, next) {
@@ -95,4 +95,14 @@ async function verifyCertificate(req, res, next) {
   }
 }
 
-module.exports = { searchBusinessNames, verifyCertificate };
+/** GET /api/public/verify-certificate?approvalNumber=... */
+async function verifyCertificateByQuery(req, res, next) {
+  const { approvalNumber } = req.query;
+  if (!approvalNumber) {
+    return res.status(400).json({ success: false, message: 'Lakkoofsa ragaa galchi.', errors: [] });
+  }
+  req.params = { approvalNumber };
+  return verifyCertificate(req, res, next);
+}
+
+module.exports = { searchBusinessNames, verifyCertificate, verifyCertificateByQuery };

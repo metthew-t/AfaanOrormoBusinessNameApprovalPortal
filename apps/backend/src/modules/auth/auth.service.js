@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const prisma = require('../../config/database');
 const env = require('../../config/env');
-const { ROLES } = require('../../../../shared/constants/roles');
+const { ROLES } = require('../../../../../shared/constants/roles');
 const { writeAuditLog } = require('../auditLogs/auditLog.service');
 const nationalIdService = require('./nationalIdService');
 
@@ -219,4 +219,35 @@ async function getMe(userId) {
   return { ...user, role: user.role.name };
 }
 
-module.exports = { register, login, refreshAccessToken, verifyNationalId, getMe };
+/** Change password for authenticated user */
+async function changePassword({ userId, currentPassword, newPassword }, ipAddress) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    const err = new Error('Fayyadamaan hin argamne.'); err.status = 404; throw err;
+  }
+  const match = await bcrypt.compare(currentPassword, user.passwordHash);
+  if (!match) {
+    const err = new Error('Jecha icciitii yeroo ammaa sirrii miti.'); err.status = 400; throw err;
+  }
+  const newHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+  await prisma.user.update({ where: { id: userId }, data: { passwordHash: newHash } });
+  await writeAuditLog({ actorUserId: userId, action: 'PASSWORD_CHANGED', entityType: 'User', entityId: userId, ipAddress });
+  return { message: 'Jecha icciitii haaromfame.' };
+}
+
+/** Update profile fields for authenticated user */
+async function updateProfile({ userId, fullName, phoneNumber }, ipAddress) {
+  const updateData = {};
+  if (fullName !== undefined) updateData.fullName = fullName;
+  if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber || null;
+
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: updateData,
+    select: { id: true, fullName: true, email: true, phoneNumber: true, role: { select: { name: true } } },
+  });
+  await writeAuditLog({ actorUserId: userId, action: 'PROFILE_UPDATED', entityType: 'User', entityId: userId, newValue: updateData, ipAddress });
+  return { ...user, role: user.role.name };
+}
+
+module.exports = { register, login, refreshAccessToken, verifyNationalId, getMe, changePassword, updateProfile };

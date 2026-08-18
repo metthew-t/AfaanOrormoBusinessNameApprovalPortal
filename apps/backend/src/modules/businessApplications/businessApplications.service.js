@@ -5,9 +5,9 @@ const { v4: uuidv4 } = require('uuid');
 const prisma = require('../../config/database');
 const repo = require('./businessApplications.repository');
 const { validateBusinessName } = require('../businessNames/businessNames.service');
-const { normalizeBusinessName } = require('../../../../shared/utils/normalizeBusinessName');
-const { APPLICATION_STATUS, PERMISSION_STATUS, LANGUAGE_REVIEW_STATUS, isValidTransition, DOCUMENT_TYPE } = require('../../../../shared/constants/statuses');
-const { ROLES } = require('../../../../shared/constants/roles');
+const { normalizeBusinessName } = require('../../../../../shared/utils/normalizeBusinessName');
+const { APPLICATION_STATUS, PERMISSION_STATUS, LANGUAGE_REVIEW_STATUS, isValidTransition, DOCUMENT_TYPE } = require('../../../../../shared/constants/statuses');
+const { ROLES } = require('../../../../../shared/constants/roles');
 const { writeAuditLog, writeAuditLogInTransaction } = require('../auditLogs/auditLog.service');
 const { createNotification } = require('../notifications/notification.service');
 
@@ -340,6 +340,40 @@ async function getTimeline(applicationId, user) {
   return { application, timeline: logs };
 }
 
+/** List applications that have correction requests for this owner */
+async function listCorrections(userId) {
+  const apps = await prisma.businessApplication.findMany({
+    where: {
+      applicantId: userId,
+      status: {
+        in: [
+          'PERMISSION_CORRECTION_REQUIRED',
+          'LANGUAGE_CORRECTION_REQUIRED',
+        ],
+      },
+    },
+    include: {
+      businessCategory: { select: { id: true, name: true } },
+      permission: { select: { status: true, reviewComment: true } },
+      languageReview: { select: { status: true, reviewComment: true } },
+    },
+    orderBy: { updatedAt: 'desc' },
+  });
+
+  return apps.map(app => ({
+    id: app.id.toString(),
+    applicationNumber: app.applicationNumber,
+    businessName: app.proposedBusinessName,
+    category: app.businessCategory?.name || '',
+    status: app.status,
+    correctionNote:
+      app.permission?.reviewComment ||
+      app.languageReview?.reviewComment ||
+      '',
+    updatedAt: app.updatedAt,
+  }));
+}
+
 module.exports = {
   createApplication,
   submitApplication,
@@ -348,4 +382,5 @@ module.exports = {
   getApplication,
   updateApplication,
   getTimeline,
+  listCorrections,
 };

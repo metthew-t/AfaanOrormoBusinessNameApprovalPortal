@@ -2,7 +2,7 @@
 // Creates in-app notifications. Never throws to avoid breaking business flows.
 
 const prisma = require('../../config/database');
-const { NOTIFICATION_TYPE } = require('../../../../shared/constants/statuses');
+const { NOTIFICATION_TYPE } = require('../../../../../shared/constants/statuses');
 
 /**
  * Creates a notification for a recipient.

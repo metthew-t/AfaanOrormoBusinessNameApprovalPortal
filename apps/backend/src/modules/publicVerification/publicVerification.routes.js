@@ -7,6 +7,8 @@ const { publicSearchLimiter } = require('../../middleware/rateLimiter');
 const controller = require('./publicVerification.controller');
 
 router.get('/business-names/search', publicSearchLimiter, controller.searchBusinessNames);
+router.get('/business-names', publicSearchLimiter, controller.searchBusinessNames);           // alias — frontend calls /public/business-names?q=...
+router.get('/verify-certificate', publicSearchLimiter, controller.verifyCertificateByQuery); // frontend calls /public/verify-certificate?approvalNumber=X
 router.get('/certificates/verify/:approvalNumber', publicSearchLimiter, controller.verifyCertificate);
 
 module.exports = router;

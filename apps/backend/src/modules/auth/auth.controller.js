@@ -70,4 +70,29 @@ async function getMe(req, res, next) {
   }
 }
 
-module.exports = { register, login, logout, refreshToken, verifyNationalId, getMe };
+async function changePassword(req, res, next) {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Jecha icciitii galchi.', errors: [] });
+    }
+    const result = await authService.changePassword(
+      { userId: req.user.id, currentPassword, newPassword },
+      getIpAddress(req)
+    );
+    return res.json({ success: true, message: result.message, data: {} });
+  } catch (err) { next(err); }
+}
+
+async function updateProfile(req, res, next) {
+  try {
+    const { fullName, phoneNumber } = req.body;
+    const user = await authService.updateProfile(
+      { userId: req.user.id, fullName, phoneNumber },
+      getIpAddress(req)
+    );
+    return res.json({ success: true, message: 'Profile haaromfame.', data: user });
+  } catch (err) { next(err); }
+}
+
+module.exports = { register, login, logout, refreshToken, verifyNationalId, getMe, changePassword, updateProfile };

@@ -8,7 +8,7 @@ const authorizeRoles = require('../../middleware/authorizeRoles');
 const validate = require('../../middleware/validate');
 const controller = require('./auth.controller');
 const { registerValidator, loginValidator, verifyNationalIdValidator } = require('./auth.validators');
-const { ROLES } = require('../../../../shared/constants/roles');
+const { ROLES } = require('../../../../../shared/constants/roles');
 
 router.post('/register', authLimiter, registerValidator, validate, controller.register);
 router.post('/login', authLimiter, loginValidator, validate, controller.login);
@@ -23,5 +23,7 @@ router.post(
   controller.verifyNationalId
 );
 router.get('/me', authenticateJWT, controller.getMe);
+router.post('/change-password', authenticateJWT, controller.changePassword);
+router.put('/profile', authenticateJWT, controller.updateProfile);
 
 module.exports = router;

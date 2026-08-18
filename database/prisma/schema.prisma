@@ -76,6 +76,19 @@ model BusinessApplication {
   businessDescription    String
   businessAddress        String
   status                 String    // ApplicationStatus enum value
+  
+  // Department-specific tracking for frontend
+  turizmStatus           String?
+  turizmComment          String?
+  turizmReviewedAt       DateTime?
+  
+  commercialStatus       String?
+  commercialComment      String?
+  commercialReviewedAt   DateTime?
+  
+  finalDecision          String?
+  finalDecisionReason    String?
+
   submittedAt            DateTime?
 
   applicant        User             @relation("ApplicantApplications", fields: [applicantId], references: [id])
@@ -142,7 +155,7 @@ model LanguageReview {
 model BusinessNameRegistry {
   id                     Int     @id @default(autoincrement())
   businessName           String
-  normalizedBusinessName String  @unique
+  normalizedBusinessName String
   source                 String  // HISTORICAL_IMPORT | MANUAL_ENTRY | NEW_APPROVAL
   applicationId          Int?    @unique
   approvalId             Int?
@@ -277,3 +290,23 @@ model IdentityVerification {
   @@index([userId])
   @@map("identity_verifications")
 }
+
+// ─── Communication Messages ───────────────────────────────────────────────────
+
+model CommunicationMessage {
+  id                Int      @id @default(autoincrement())
+  subject           String
+  senderName        String
+  senderDepartment  String
+  recipientId       Int?
+  applicationNumber String?
+  body              String
+  isRead            Boolean  @default(false)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([recipientId])
+  @@map("communication_messages")
+}
+

@@ -20,6 +20,9 @@ const certificateRoutes = require('./modules/certificates/certificates.routes');
 const notificationRoutes = require('./modules/notifications/notification.routes');
 const publicRoutes = require('./modules/publicVerification/publicVerification.routes');
 const adminRoutes = require('./modules/admin/admin.routes');
+const communicationRoutes = require('./modules/communication/communication.routes');
+const turizmRoutes = require('./modules/turizm/turizm.routes');
+const commercialRoutes = require('./modules/commercial/commercial.routes');
 
 // ─── App initialization ──────────────────────────────────────────────────────
 const app = express();
@@ -77,6 +80,15 @@ app.use('/api/public', publicRoutes);
 
 // Admin
 app.use('/api/admin', adminRoutes);
+
+// Communication Biro (FINANCIAL_OFFICER)
+app.use('/api/communication', communicationRoutes);
+
+// Addaf Turizm Biro (LANGUAGE_OFFICER)
+app.use('/api/turizm', turizmRoutes);
+
+// Commercial Office (SENIOR_OFFICER)
+app.use('/api/commercial', commercialRoutes);
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
 app.use((req, res) => {

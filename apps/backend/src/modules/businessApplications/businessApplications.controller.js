@@ -4,7 +4,7 @@ const service = require('./businessApplications.service');
 const { getIpAddress } = require('../auditLogs/auditLog.service');
 const prisma = require('../../config/database');
 const path = require('path');
-const { DOCUMENT_TYPE } = require('../../../../shared/constants/statuses');
+const { DOCUMENT_TYPE } = require('../../../../../shared/constants/statuses');
 
 async function createApplication(req, res, next) {
   try {
@@ -131,6 +131,13 @@ async function downloadDocument(req, res, next) {
   }
 }
 
+async function listCorrections(req, res, next) {
+  try {
+    const data = await service.listCorrections(req.user.id);
+    return res.json({ success: true, message: 'Sirreessawwan argaman.', data });
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   createApplication,
   listApplications,
@@ -141,4 +148,5 @@ module.exports = {
   getTimeline,
   uploadDocument,
   downloadDocument,
+  listCorrections,
 };

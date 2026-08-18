@@ -71,4 +71,14 @@ async function markAllRead(req, res, next) {
   }
 }
 
-module.exports = { listNotifications, markRead, markAllRead };
+/** GET /api/notifications/unread-count */
+async function getUnreadCount(req, res, next) {
+  try {
+    const count = await prisma.notification.count({
+      where: { recipientId: req.user.id, isRead: false },
+    });
+    return res.json({ success: true, message: 'Lakkoofsi beeksisawwan dubbifamanii.', data: { count } });
+  } catch (err) { next(err); }
+}
+
+module.exports = { listNotifications, markRead, markAllRead, getUnreadCount };

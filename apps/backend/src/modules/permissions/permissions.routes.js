@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const authenticateJWT = require('../../middleware/authenticateJWT');
 const authorizeRoles = require('../../middleware/authorizeRoles');
-const { ROLES } = require('../../../../shared/constants/roles');
+const { ROLES } = require('../../../../../shared/constants/roles');
 const controller = require('./permissions.controller');
 
 router.use(authenticateJWT);

@@ -6,7 +6,7 @@ const authenticateJWT = require('../../middleware/authenticateJWT');
 const authorizeRoles = require('../../middleware/authorizeRoles');
 const validate = require('../../middleware/validate');
 const { upload } = require('../../config/multer');
-const { ROLES } = require('../../../../shared/constants/roles');
+const { ROLES } = require('../../../../../shared/constants/roles');
 const controller = require('./businessApplications.controller');
 const {
   createApplicationValidator,
@@ -39,6 +39,13 @@ router.get(
   controller.listApplications
 );
 
+// Corrections list — frontend calls GET /applications/corrections
+router.get(
+  '/corrections',
+  authorizeRoles(ROLES.BUSINESS_OWNER),
+  controller.listCorrections
+);
+
 // Single application detail
 router.get(
   '/:id',
@@ -62,9 +69,18 @@ router.post(
   controller.submitApplication
 );
 
-// Submit correction
+// Submit correction (singular path — legacy)
 router.post(
   '/:id/correction',
+  authorizeRoles(ROLES.BUSINESS_OWNER),
+  correctionValidator,
+  validate,
+  controller.submitCorrection
+);
+
+// Submit correction (plural path — frontend calls /corrections)
+router.post(
+  '/:id/corrections',
   authorizeRoles(ROLES.BUSINESS_OWNER),
   correctionValidator,
   validate,
