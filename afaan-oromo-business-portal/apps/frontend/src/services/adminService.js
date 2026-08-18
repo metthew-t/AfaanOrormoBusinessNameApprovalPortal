@@ -82,6 +82,11 @@ export const getHistoricalNames = async (params) => {
   return api.get('/admin/historical-names', { params });
 };
 
+export const addHistoricalName = async (payload) => {
+  if (USE_MOCK) return mock({ id: `HIST-${Date.now()}`, ...payload, source: 'MANUAL_ENTRY', isActive: true });
+  return api.post('/admin/historical-names', payload);
+};
+
 export const importHistoricalNames = async (file) => {
   if (USE_MOCK) {
     await new Promise((r) => setTimeout(r, 1200));

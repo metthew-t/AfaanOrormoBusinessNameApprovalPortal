@@ -1,4 +1,5 @@
 import { useAsync } from '@/hooks/useAsync';
+import { useSettings } from '@/context/SettingsContext';
 import { getMyApplications } from '@/services/applicationService';
 import { formatDate } from '@/utils/formatters';
 import { APPLICATION_STATUS } from '@/constants/statuses';
@@ -9,6 +10,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import styles from './ApprovalMessagesPage.module.css';
 
 export default function ApprovalMessagesPage() {
+  const { getSetting } = useSettings();
   const { data, loading, error, refetch } = useAsync(() => getMyApplications(), []);
   
   // Filter applications that have approval/rejection messages
@@ -23,8 +25,8 @@ export default function ApprovalMessagesPage() {
   return (
     <div className={styles.page}>
       <div className="page-header">
-        <h1>Ergaa Ragga</h1>
-        <p>Haala raggaa fi ergaa Biiroo Qunnamtii irraa iyyata keessaniif ilaalaa.</p>
+        <h1>{getSetting('owner_approval_msg_title', 'Ergaa Ragga')}</h1>
+        <p>{getSetting('owner_approval_msg_message', 'Haala raggaa fi ergaa Biiroo Qunnamtii irraa iyyata keessaniif ilaalaa.')}</p>
       </div>
 
       {messagesWithStatus.length === 0 ? (

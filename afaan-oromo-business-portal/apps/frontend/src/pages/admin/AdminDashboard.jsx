@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAsync } from '@/hooks/useAsync';
-import { getAdminStats, getRecentTransactions, getSystemHealth } from '@/services/adminService';
+import { getAdminDashboardStats, getRecentTransactions, getSystemHealth } from '@/services/adminService';
 import { formatDate } from '@/utils/formatters';
 import { useSettings } from '@/context/SettingsContext';
 import { StatCard } from '@/components/ui/Card';
@@ -12,7 +12,7 @@ import styles from './AdminDashboard.module.css';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { data: stats, loading: statsLoading } = useAsync(() => getAdminStats(), []);
+  const { data: stats, loading: statsLoading } = useAsync(() => getAdminDashboardStats(), []);
   const { data: transactions, loading: transLoading } = useAsync(() => getRecentTransactions(), []);
   const { data: health } = useAsync(() => getSystemHealth(), []);
   const { getSetting } = useSettings();

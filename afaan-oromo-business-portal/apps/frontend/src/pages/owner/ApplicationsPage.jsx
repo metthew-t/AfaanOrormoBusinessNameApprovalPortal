@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAsync } from '@/hooks/useAsync';
+import { useSettings } from '@/context/SettingsContext';
 import { getMyApplications } from '@/services/applicationService';
 import { formatDate } from '@/utils/formatters';
 import DataTable from '@/components/ui/DataTable';
@@ -28,6 +29,7 @@ const STATUS_OPTIONS = [
 
 export default function ApplicationsPage() {
   const navigate = useNavigate();
+  const { getSetting } = useSettings();
   const [filter, setFilter] = useState('');
   const [search, setSearch] = useState('');
 
@@ -63,8 +65,8 @@ export default function ApplicationsPage() {
     <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h1>Iyyata Koo</h1>
-          <p>Iyyata maqaa daldala keessan hunda hordofaa fi bulchaa.</p>
+          <h1>{getSetting('owner_applications_title', 'Iyyata Hunda')}</h1>
+          <p>{getSetting('owner_applications_message', 'Iyyata maqaa daldalaa keessanii hunda asitti to\'adhaa.')}</p>
         </div>
         <Button onClick={() => navigate('/owner/applications/new')}>
           + Iyyata Haaraa

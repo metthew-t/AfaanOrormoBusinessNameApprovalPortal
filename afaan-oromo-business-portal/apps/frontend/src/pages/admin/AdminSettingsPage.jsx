@@ -43,6 +43,12 @@ export default function AdminSettingsPage() {
         { key: 'owner_dashboard_title', label: 'Dashboard Title', default: 'Gabatee' },
         { key: 'owner_dashboard_message', label: 'Welcome Message', default: 'Baga nagaan dhuftan. Kunoo ilaalchi waligalaa iyyata maqaa daldalaa keessanii.' },
         { key: 'owner_recent_apps_title', label: 'Recent Apps Section Title', default: 'Iyyata Yeroo Dhihoo' },
+        { key: 'owner_new_app_title', label: 'New Application Page Title', default: 'Iyyata Daldala Haaraa' },
+        { key: 'owner_new_app_message', label: 'New Application Message', default: 'Maqaa daldala keessanii eeyyamamuuf tarkaanfiiwwan hunda xumuraa.' },
+        { key: 'owner_applications_title', label: 'Applications List Title', default: 'Iyyata Hunda' },
+        { key: 'owner_applications_message', label: 'Applications List Message', default: 'Iyyata maqaa daldalaa keessanii hunda asitti to\'adhaa.' },
+        { key: 'owner_approval_msg_title', label: 'Approval Messages Title', default: 'Ergaa Ragga' },
+        { key: 'owner_approval_msg_message', label: 'Approval Messages Message', default: 'Ergaawwan mirkaneessa ykn kufaa ta\'uu iyyata keessanii asitti dubbisaa.' },
       ],
     },
     {

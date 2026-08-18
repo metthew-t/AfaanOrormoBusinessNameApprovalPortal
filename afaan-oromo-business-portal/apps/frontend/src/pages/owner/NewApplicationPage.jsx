@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/useToast';
+import { useSettings } from '@/context/SettingsContext';
 import {
   getCategories,
 } from '@/services/adminService';
@@ -31,6 +32,7 @@ const STEPS = [
 export default function NewApplicationPage() {
   const navigate = useNavigate();
   const toast    = useToast();
+  const { getSetting } = useSettings();
   const [step,    setStep]    = useState(1);
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState(null);
@@ -127,8 +129,8 @@ export default function NewApplicationPage() {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1>Iyyata Daldala Haaraa</h1>
-        <p>Maqaa daldala keessanii eeyyamamuuf tarkaanfiiwwan hunda xumuraa.</p>
+        <h1>{getSetting('owner_new_app_title', 'Iyyata Daldala Haaraa')}</h1>
+        <p>{getSetting('owner_new_app_message', 'Maqaa daldala keessanii eeyyamamuuf tarkaanfiiwwan hunda xumuraa.')}</p>
       </div>
 
       {/* Stepper */}
