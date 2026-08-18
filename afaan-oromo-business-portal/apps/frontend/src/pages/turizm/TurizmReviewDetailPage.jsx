@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/useToast';
 import { getApplicationForReview, approveDescription, rejectDescription } from '@/services/turizmService';
 import { formatDate } from '@/utils/formatters';
 import { extractErrorMessage } from '@/utils/apiHelpers';
+import { useSettings } from '@/context/SettingsContext';
 import Button from '@/components/ui/Button';
 import Textarea from '@/components/ui/Textarea';
 import Alert from '@/components/ui/Alert';
@@ -23,6 +24,7 @@ export default function TurizmReviewDetailPage() {
   const { data: app, loading, error, refetch } = useAsync(() => getApplicationForReview(id), [id]);
   const { mutate: approve, loading: approving } = useMutation(approveDescription);
   const { mutate: reject, loading: rejecting } = useMutation(rejectDescription);
+  const { getSetting } = useSettings();
 
   const [action, setAction] = useState(null); // 'approve', 'reject'
   const [reason, setReason] = useState('');
@@ -217,13 +219,13 @@ export default function TurizmReviewDetailPage() {
           <div className={styles.confirmMessage}>
             {action === 'approve' && (
               <>
-                <p>You are about to <strong>approve</strong> the language compliance for this business description.</p>
+                <p>{getSetting('turizm_approve_message', 'You are about to approve the language compliance for this business description.')}</p>
                 <p>Please provide detailed feedback on why this description meets Afaan Oromo standards:</p>
               </>
             )}
             {action === 'reject' && (
               <>
-                <p>You are about to <strong>reject</strong> this application.</p>
+                <p>{getSetting('turizm_reject_message', 'You are about to reject this application.')}</p>
                 <p>Please provide a detailed explanation of why the description does not meet language compliance standards:</p>
               </>
             )}

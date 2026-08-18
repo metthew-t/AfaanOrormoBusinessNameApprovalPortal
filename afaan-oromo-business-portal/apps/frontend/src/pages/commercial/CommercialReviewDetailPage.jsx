@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/useToast';
 import { getApplicationForReview, approvePermit, rejectPermit } from '@/services/commercialService';
 import { formatDate } from '@/utils/formatters';
 import { extractErrorMessage } from '@/utils/apiHelpers';
+import { useSettings } from '@/context/SettingsContext';
 import Button from '@/components/ui/Button';
 import Textarea from '@/components/ui/Textarea';
 import Alert from '@/components/ui/Alert';
@@ -23,6 +24,7 @@ export default function CommercialReviewDetailPage() {
   const { data: app, loading, error, refetch } = useAsync(() => getApplicationForReview(id), [id]);
   const { mutate: approve, loading: approving } = useMutation(approvePermit);
   const { mutate: reject, loading: rejecting } = useMutation(rejectPermit);
+  const { getSetting } = useSettings();
 
   const [action, setAction] = useState(null); // 'approve', 'reject'
   const [reason, setReason] = useState('');
@@ -246,14 +248,14 @@ export default function CommercialReviewDetailPage() {
           <div className={styles.confirmMessage}>
             {action === 'approve' && (
               <>
-                <p>You are about to <strong>approve</strong> the commercial compliance for this business permit.</p>
+                <p>{getSetting('commercial_approve_message', 'You are about to approve the commercial compliance for this business permit.')}</p>
                 <p>Please provide detailed feedback on why this permit meets commercial requirements:</p>
               </>
             )}
             {action === 'reject' && (
               <>
-                <p>You are about to <strong>reject</strong> this application.</p>
-                <p>Please provide a detailed explanation of why the business permit does not meet commercial compliance standards:</p>
+                <p>{getSetting('commercial_reject_message', 'You are about to reject this application.')}</p>
+                <p>Please provide a detailed explanation of why the commercial permit is rejected:</p>
               </>
             )}
           </div>

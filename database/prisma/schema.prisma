@@ -310,3 +310,15 @@ model CommunicationMessage {
   @@map("communication_messages")
 }
 
+// ─── System Settings ──────────────────────────────────────────────────────────
+
+model SystemSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}

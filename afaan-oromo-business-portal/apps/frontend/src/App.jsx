@@ -50,6 +50,7 @@ import AdminCategoriesPage  from '@/pages/admin/AdminCategoriesPage';
 import AdminReservedTerms   from '@/pages/admin/AdminReservedTerms';
 import AdminHistoricalNames from '@/pages/admin/AdminHistoricalNames';
 import AdminAuditLogs       from '@/pages/admin/AdminAuditLogs';
+import AdminSettingsPage    from '@/pages/admin/AdminSettingsPage';
 
 // ── Public pages ─────────────────────────────────────────────────
 import PublicBusinessNames from '@/pages/public/PublicBusinessNames';
@@ -77,9 +78,12 @@ function RoleLayout({ roles, children }) {
   );
 }
 
+import { SettingsProvider } from '@/context/SettingsContext';
+
 export default function App() {
   return (
     <BrowserRouter>
+      <SettingsProvider>
       <AuthProvider>
         <NotificationProvider>
           {/* Global toast notifications */}
@@ -191,6 +195,8 @@ export default function App() {
             element={<RoleLayout roles={[ROLES.ADMIN]}><AdminHistoricalNames /></RoleLayout>} />
           <Route path="/admin/audit-logs"
             element={<RoleLayout roles={[ROLES.ADMIN]}><AdminAuditLogs /></RoleLayout>} />
+          <Route path="/admin/settings"
+            element={<RoleLayout roles={[ROLES.ADMIN]}><AdminSettingsPage /></RoleLayout>} />
           <Route path="/admin/profile"
             element={<RoleLayout roles={[ROLES.ADMIN]}><ProfilePage /></RoleLayout>} />
 
@@ -201,6 +207,7 @@ export default function App() {
         </Routes>
         </NotificationProvider>
       </AuthProvider>
+      </SettingsProvider>
     </BrowserRouter>
   );
 }

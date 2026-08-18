@@ -23,6 +23,7 @@ const adminRoutes = require('./modules/admin/admin.routes');
 const communicationRoutes = require('./modules/communication/communication.routes');
 const turizmRoutes = require('./modules/turizm/turizm.routes');
 const commercialRoutes = require('./modules/commercial/commercial.routes');
+const settingsRoutes = require('./modules/settings/settings.routes');
 
 // ─── App initialization ──────────────────────────────────────────────────────
 const app = express();
@@ -89,6 +90,9 @@ app.use('/api/turizm', turizmRoutes);
 
 // Commercial Office (SENIOR_OFFICER)
 app.use('/api/commercial', commercialRoutes);
+
+// Settings
+app.use('/api/settings', settingsRoutes);
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
 app.use((req, res) => {

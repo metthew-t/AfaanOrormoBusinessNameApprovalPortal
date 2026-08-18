@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/useToast';
 import { getIncomingApplications, routeApplication, acceptApplication, rejectApplication } from '@/services/communicationService';
 import { formatDate } from '@/utils/formatters';
 import { extractErrorMessage } from '@/utils/apiHelpers';
+import { useSettings } from '@/context/SettingsContext';
 import DataTable from '@/components/ui/DataTable';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Button from '@/components/ui/Button';
@@ -20,6 +21,7 @@ export default function IncomingApplicationsPage() {
   const { mutate: route, loading: routing } = useMutation(routeApplication);
   const { mutate: accept, loading: accepting } = useMutation(acceptApplication);
   const { mutate: reject, loading: rejecting } = useMutation(rejectApplication);
+  const { getSetting } = useSettings();
 
   const [selectedApp, setSelectedApp] = useState(null);
   const [routeModalOpen, setRouteModalOpen] = useState(false);
@@ -272,8 +274,8 @@ export default function IncomingApplicationsPage() {
 
               <Alert variant={decisionType === 'accept' ? 'success' : 'warning'}>
                 {decisionType === 'accept' 
-                  ? 'You are about to accept this application. A message will be sent to the business owner explaining why it was accepted.'
-                  : 'You are about to reject this application. A message will be sent to the business owner explaining why it was rejected.'}
+                  ? getSetting('communication_accept_message', 'You are about to accept this application. A message will be sent to the business owner explaining why it was accepted.')
+                  : getSetting('communication_reject_message', 'You are about to reject this application. A message will be sent to the business owner explaining why it was rejected.')}
               </Alert>
 
               <Textarea

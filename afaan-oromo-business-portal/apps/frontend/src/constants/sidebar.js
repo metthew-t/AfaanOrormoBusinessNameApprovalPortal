@@ -46,6 +46,7 @@ export const SIDEBAR_ITEMS = {
     { label: 'Reserved Terms',  path: ROUTES.ADMIN_RESERVED_TERMS, icon: '🚫' },
     { label: 'Historical Names',path: ROUTES.ADMIN_HISTORICAL,     icon: '📚' },
     { label: 'Audit Logs',      path: ROUTES.ADMIN_AUDIT_LOGS,     icon: '🔍' },
+    { label: 'Settings',        path: '/admin/settings',           icon: '⚙️' },
     { label: 'Notifications',   path: ROUTES.ADMIN_PROFILE,        icon: '🔔' },
     { divider: true },
     { label: 'Profile',         path: ROUTES.ADMIN_PROFILE,        icon: '👤' },

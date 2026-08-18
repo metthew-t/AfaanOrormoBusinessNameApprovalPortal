@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAsync } from '@/hooks/useAsync';
+import { useSettings } from '@/context/SettingsContext';
 import { getMyApplications } from '@/services/applicationService';
 import { APPLICATION_STATUS, STATUS_LABELS, STATUS_BADGE_VARIANT } from '@/constants/statuses';
 import { formatDate } from '@/utils/formatters';
@@ -13,6 +14,7 @@ import styles from './OwnerDashboard.module.css';
 
 export default function OwnerDashboard() {
   const navigate = useNavigate();
+  const { getSetting } = useSettings();
   const { data, loading, error, refetch } = useAsync(() => getMyApplications(), []);
 
   const apps = data ?? [];
@@ -60,8 +62,8 @@ export default function OwnerDashboard() {
   return (
     <div className={styles.page}>
       <div className="page-header">
-        <h1>Gabatee</h1>
-        <p>Baga nagaan dhuftan. Kunoo ilaalchi waligalaa iyyata maqaa daldalaa keessanii.</p>
+        <h1>{getSetting('owner_dashboard_title', 'Gabatee')}</h1>
+        <p>{getSetting('owner_dashboard_message', 'Baga nagaan dhuftan. Kunoo ilaalchi waligalaa iyyata maqaa daldalaa keessanii.')}</p>
       </div>
 
       {loading ? (
@@ -91,7 +93,7 @@ export default function OwnerDashboard() {
       {/* Recent applications */}
       <div className="card" style={{ marginTop: 'var(--space-6)' }}>
         <div className="card-header">
-          <h2>Iyyata Yeroo Dhihoo</h2>
+          <h2>{getSetting('owner_recent_apps_title', 'Iyyata Yeroo Dhihoo')}</h2>
           <Button size="sm" variant="ghost" onClick={() => navigate('/owner/applications')}>
             Hunda ilaali →
           </Button>
