@@ -109,4 +109,11 @@ router.get(
   controller.downloadDocument
 );
 
+// Document delete (authenticated)
+router.delete(
+  '/:id/documents/:docId',
+  authorizeRoles(ROLES.BUSINESS_OWNER),
+  controller.deleteDocument
+);
+
 module.exports = router;

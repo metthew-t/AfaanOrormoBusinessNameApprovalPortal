@@ -30,6 +30,7 @@ router.post('/users', adminController.createUser);
 router.patch('/users/:id', adminController.updateUser);
 router.put('/users/:id', adminController.updateUser);           // alias
 router.patch('/users/:id/status', adminController.toggleUserStatus);
+router.delete('/users/:id', adminController.deleteUser);
 
 // ─── Business Categories ──────────────────────────────────────────────────
 // Frontend calls /admin/categories — backend previously used /admin/business-categories
@@ -46,6 +47,7 @@ router.patch('/business-categories/:id', adminController.updateCategory);
 // ─── Reserved Terms ──────────────────────────────────────────────────────
 router.get('/reserved-terms', adminController.listReservedTerms);
 router.post('/reserved-terms', adminController.createReservedTerm);
+router.put('/reserved-terms/:id', adminController.updateReservedTerm);
 router.delete('/reserved-terms/:id', adminController.deleteReservedTerm);
 
 // ─── Historical Business Names ──────────────────────────────────────────

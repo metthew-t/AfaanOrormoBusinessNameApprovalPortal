@@ -138,6 +138,39 @@ async function listCorrections(req, res, next) {
   } catch (err) { next(err); }
 }
 
+async function deleteDocument(req, res, next) {
+  try {
+    const applicationId = parseInt(req.params.id, 10);
+    const docId = parseInt(req.params.docId, 10);
+
+    // Enforce ownership check
+    await service.getApplication(applicationId, req.user);
+
+    const doc = await prisma.uploadedDocument.findFirst({
+      where: { id: docId, applicationId },
+    });
+
+    if (!doc) {
+      return res.status(404).json({ success: false, message: 'Faayiliin hin argamne.', errors: [] });
+    }
+
+    const fs = require('fs');
+    if (fs.existsSync(doc.storagePath)) {
+      try {
+        fs.unlinkSync(doc.storagePath);
+      } catch (e) {
+        console.error('Disk unlink failed:', e);
+      }
+    }
+
+    await prisma.uploadedDocument.delete({
+      where: { id: docId },
+    });
+
+    return res.json({ success: true, message: 'Faayiliin haqameera.' });
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   createApplication,
   listApplications,
@@ -148,5 +181,6 @@ module.exports = {
   getTimeline,
   uploadDocument,
   downloadDocument,
+  deleteDocument,
   listCorrections,
 };

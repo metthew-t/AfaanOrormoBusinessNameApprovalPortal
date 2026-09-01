@@ -119,6 +119,30 @@ async function sendFinalDecision(req, res, next) {
   }
 }
 
+async function getReviewedApplications(req, res, next) {
+  try {
+    const applications = await service.getReviewedApplications();
+    return res.json({ success: true, data: applications });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function makeFinalDecision(req, res, next) {
+  try {
+    const { decision, reason } = req.body;
+    const result = await service.makeFinalDecision(
+      parseInt(req.params.id, 10),
+      { decision, reason },
+      req.user.id,
+      getIpAddress(req)
+    );
+    return res.json({ success: true, message: 'Final decision made successfully', data: result });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getStats,
   getApplications,
@@ -132,5 +156,7 @@ module.exports = {
   updateApplicationStatus,
   acceptApplication,
   rejectApplication,
-  sendFinalDecision
+  sendFinalDecision,
+  getReviewedApplications,
+  makeFinalDecision,
 };

@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit');
 /** General API rate limit */
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200,
+  max: 10000, // Very high for development
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -19,7 +19,7 @@ const generalLimiter = rateLimit({
 /** Stricter limit for auth endpoints */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 10000, // Very high for development
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -32,7 +32,7 @@ const authLimiter = rateLimit({
 /** Public search limit */
 const publicSearchLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 30,
+  max: 1000, // Very high for development
   standardHeaders: true,
   legacyHeaders: false,
   message: {

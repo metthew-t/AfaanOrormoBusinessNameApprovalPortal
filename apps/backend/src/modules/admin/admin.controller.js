@@ -43,21 +43,23 @@ async function listUsers(req, res, next) {
 
 async function createUser(req, res, next) {
   try {
-    const { fullName, email, phoneNumber, password, roleName } = req.body;
+    const { fullName, email, phoneNumber, password } = req.body;
+    const roleName = req.body.roleName || req.body.role;
 
     const role = await prisma.role.findUnique({ where: { name: roleName } });
     if (!role) {
       return res.status(400).json({ success: false, message: `Gaheen "${roleName}" hin argamne.`, errors: [] });
     }
 
-    const exists = await prisma.user.findUnique({ where: { email } });
+    const normalizedEmail = email.trim().toLowerCase();
+    const exists = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (exists) {
       return res.status(409).json({ success: false, message: 'Imeeliin kun duraan galmaa\'ee jira.', errors: [] });
     }
 
     const hash = await bcrypt.hash(password, 12);
     const user = await prisma.user.create({
-      data: { fullName, email, phoneNumber: phoneNumber || null, passwordHash: hash, roleId: role.id },
+      data: { fullName, email: normalizedEmail, phoneNumber: phoneNumber || null, passwordHash: hash, roleId: role.id },
       select: { id: true, fullName: true, email: true, role: { select: { name: true } } },
     });
 
@@ -70,7 +72,8 @@ async function createUser(req, res, next) {
 async function updateUser(req, res, next) {
   try {
     const userId = parseInt(req.params.id, 10);
-    const { fullName, phoneNumber, isActive, roleName } = req.body;
+    const { fullName, phoneNumber, isActive } = req.body;
+    const roleName = req.body.roleName || req.body.role;
 
     const updateData = {};
     if (fullName !== undefined) updateData.fullName = fullName;
@@ -151,6 +154,45 @@ async function createReservedTerm(req, res, next) {
     await writeAuditLog({ actorUserId: req.user.id, action: 'ADMIN_RESERVED_TERM_ADDED', entityType: 'ReservedTerm', entityId: reserved.id, newValue: { term }, ipAddress: getIpAddress(req) });
 
     return res.status(201).json({ success: true, message: 'Jecha dhorkaa dabale.', data: reserved });
+  } catch (err) { next(err); }
+}
+
+async function updateReservedTerm(req, res, next) {
+  try {
+    const { term } = req.body;
+    const id = parseInt(req.params.id, 10);
+    
+    if (!term) return res.status(400).json({ success: false, message: 'Jecha galchi.', errors: [] });
+
+    const normalizedTerm = normalizeBusinessName(term);
+    
+    // Check if normalized term already exists (excluding current record)
+    const existing = await prisma.reservedTerm.findFirst({ 
+      where: { 
+        normalizedTerm,
+        id: { not: id }
+      } 
+    });
+    
+    if (existing) return res.status(409).json({ success: false, message: 'Jecha kun duraan jira.', errors: [] });
+
+    const oldTerm = await prisma.reservedTerm.findUnique({ where: { id } });
+    const reserved = await prisma.reservedTerm.update({ 
+      where: { id },
+      data: { term, normalizedTerm }
+    });
+    
+    await writeAuditLog({ 
+      actorUserId: req.user.id, 
+      action: 'ADMIN_RESERVED_TERM_UPDATED', 
+      entityType: 'ReservedTerm', 
+      entityId: reserved.id, 
+      previousValue: { term: oldTerm.term },
+      newValue: { term }, 
+      ipAddress: getIpAddress(req) 
+    });
+
+    return res.json({ success: true, message: 'Jecha dhorkaa haaromfame.', data: reserved });
   } catch (err) { next(err); }
 }
 
@@ -264,6 +306,21 @@ async function toggleUserStatus(req, res, next) {
   } catch (err) { next(err); }
 }
 
+async function deleteUser(req, res, next) {
+  try {
+    const userId = parseInt(req.params.id, 10);
+    // Prevent deleting the main admin user (or themselves)
+    if (userId === req.user.id) {
+      return res.status(400).json({ success: false, message: 'Ofii kee haquu hin dandeessu.' });
+    }
+    
+    await prisma.user.delete({ where: { id: userId } });
+    await writeAuditLog({ actorUserId: req.user.id, action: 'ADMIN_USER_DELETED', entityType: 'User', entityId: userId, ipAddress: getIpAddress(req) });
+    
+    return res.json({ success: true, message: 'Fayyadamaan haqameera.', data: {} });
+  } catch (err) { next(err); }
+}
+
 // ─── Delete Business Category ─────────────────────────────────────────────────
 
 async function deleteCategory(req, res, next) {
@@ -358,9 +415,9 @@ async function getSystemHealth(req, res, next) {
 }
 
 module.exports = {
-  listUsers, createUser, updateUser, toggleUserStatus,
+  listUsers, createUser, updateUser, toggleUserStatus, deleteUser,
   listCategories, createCategory, updateCategory, deleteCategory,
-  listReservedTerms, createReservedTerm, deleteReservedTerm,
+  listReservedTerms, createReservedTerm, updateReservedTerm, deleteReservedTerm,
   listHistoricalNames, addHistoricalName, importHistoricalNames,
   getDashboardStats, getRecentTransactions, getSystemHealth,
 };

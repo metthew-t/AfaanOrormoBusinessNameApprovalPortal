@@ -1,5 +1,5 @@
 // apps/backend/src/modules/turizm/turizm.controller.js
-// Addaf Turizm Biro controller — handles /api/turizm/* endpoints
+// Waajira Aadaaf Turizimii controller — handles /api/turizm/* endpoints
 
 const service = require('./turizm.service');
 const { getIpAddress } = require('../auditLogs/auditLog.service');
@@ -27,14 +27,24 @@ async function getReviewDetail(req, res, next) {
 
 async function approveReview(req, res, next) {
   try {
-    const result = await service.approveReview(req.params.id, req.user.id, req.body, getIpAddress(req));
+    // Map comment to reviewComment expected by service
+    const body = { 
+      reviewComment: req.body.comment || req.body.reviewComment || '',
+      suggestedBusinessName: req.body.suggestedBusinessName
+    };
+    const result = await service.approveReview(req.params.id, req.user.id, body, getIpAddress(req));
     return res.json({ success: true, message: 'Maqaan daldalaa mirkana\'e.', data: result });
   } catch (err) { next(err); }
 }
 
 async function rejectReview(req, res, next) {
   try {
-    const result = await service.rejectReview(req.params.id, req.user.id, req.body, getIpAddress(req));
+    // Map reason to reviewComment expected by service
+    const body = { 
+      reviewComment: req.body.reason || req.body.reviewComment || '',
+      suggestedBusinessName: req.body.suggestedBusinessName
+    };
+    const result = await service.rejectReview(req.params.id, req.user.id, body, getIpAddress(req));
     return res.json({ success: true, message: 'Maqaan daldalaa dide.', data: result });
   } catch (err) { next(err); }
 }

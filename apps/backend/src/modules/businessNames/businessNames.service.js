@@ -61,16 +61,16 @@ async function validateBusinessName(proposedName, excludeApplicationId = null) {
 
   // Step 4: Exact/normalized duplicate — against business_name_registry
   const registryMatch = await prisma.businessNameRegistry.findFirst({
-    where: { normalizedName },
+    where: { normalizedBusinessName: normalizedName },
   });
 
   if (registryMatch) {
-    if (registryMatch.originalName.toLowerCase() === proposedName.toLowerCase()) {
+    if (registryMatch.businessName.toLowerCase() === proposedName.toLowerCase()) {
       checks.exactDuplicate = true;
       reasons.push('Maqaan kun sirumatti kanaan dura galmaa\'ee jira.');
     } else {
       checks.normalizedDuplicate = true;
-      reasons.push(`Maqaan kun kan kanaan dura galmaa'e "${registryMatch.originalName}" wajjiin tokko.`);
+      reasons.push(`Maqaan kun kan kanaan dura galmaa'e "${registryMatch.businessName}" wajjiin tokko.`);
     }
   }
 

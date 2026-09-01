@@ -29,12 +29,12 @@ const CATEGORIES = [
 
 const RESERVED_TERMS = [
   'mootummaa',
-  'biyyoolessa',
+  'daldala',
   'waajjira',
   'poolisii',
   'oromiyaa',
-  'adaamaa',
-  'banka',
+  'adama',
+  'bank',
   'hospitaala',
   'yuunivarsiitii',
   'mana barumsaa',
@@ -63,7 +63,7 @@ async function main() {
     where: { email: 'admin@aobnap.gov.et' },
     update: {},
     create: {
-      fullName: 'Bulchiinsa Sirna',
+      fullName: 'Administrator',
       email: 'admin@aobnap.gov.et',
       phoneNumber: '+251911000001',
       passwordHash: adminPasswordHash,
@@ -112,7 +112,7 @@ async function main() {
 
   // 5. Seed Reserved Terms
   console.log('  → Creating reserved terms...');
-  const { normalizeBusinessName } = require('../../shared/utils/normalizeBusinessName');
+  const { normalizeBusinessName } = require('../../../shared/utils/normalizeBusinessName');
 
   for (const term of RESERVED_TERMS) {
     const normalizedTerm = normalizeBusinessName(term);

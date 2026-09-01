@@ -6,13 +6,17 @@ const { ROLES } = require('../../../../../shared/constants/roles');
 
 const router = express.Router();
 
-// All routes require FINANCIAL_OFFICER role (mapped to Communication Biro in frontend)
+// All routes require FINANCIAL_OFFICER role (mapped to Waajira Kominikeeshinii in frontend)
 router.use(authenticateJWT, authorizeRoles(ROLES.FINANCIAL_OFFICER));
 
 router.get('/dashboard/stats', controller.getStats);
 router.get('/applications', controller.getApplications);
 router.get('/applications/:id', controller.getApplicationDetail);
 router.post('/applications/:id/route', controller.routeApplication);
+
+// New: Get applications with completed reviews waiting for final decision
+router.get('/reviewed-applications', controller.getReviewedApplications);
+router.post('/applications/:id/final-decision', controller.makeFinalDecision);
 
 router.get('/messages', controller.getMessages);
 router.post('/messages', controller.sendMessage);

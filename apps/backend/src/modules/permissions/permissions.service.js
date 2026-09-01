@@ -81,23 +81,49 @@ async function approvePermission(permissionId, officerId, { reviewComment }, ipA
       },
     });
 
-    // Update application status to PERMISSION_APPROVED then LANGUAGE_REVIEW_PENDING
+    // Update application commercialStatus
     await tx.businessApplication.update({
       where: { id: applicationId },
-      data: { status: APPLICATION_STATUS.PERMISSION_APPROVED },
+      data: { commercialStatus: 'APPROVED', commercialComment: reviewComment, commercialReviewedAt: new Date() },
     });
 
-    // Immediately create language review record and advance to LANGUAGE_REVIEW_PENDING
-    await tx.businessApplication.update({
-      where: { id: applicationId },
-      data: { status: APPLICATION_STATUS.LANGUAGE_REVIEW_PENDING },
-    });
+    // Check if language review is also completed
+    const languageReview = await tx.languageReview.findUnique({ where: { applicationId } });
+    const bothReviewsComplete = languageReview && 
+      (languageReview.status === LANGUAGE_REVIEW_STATUS.APPROVED || 
+       languageReview.status === LANGUAGE_REVIEW_STATUS.REJECTED);
 
-    const existingLR = await tx.languageReview.findUnique({ where: { applicationId } });
-    if (!existingLR) {
-      await tx.languageReview.create({
-        data: { applicationId, status: LANGUAGE_REVIEW_STATUS.PENDING },
+    if (bothReviewsComplete) {
+      // Both reviews done - send back to Communication for final decision
+      await tx.businessApplication.update({
+        where: { id: applicationId },
+        data: { status: APPLICATION_STATUS.REVIEWS_COMPLETED },
       });
+
+      // Notify all communication officers
+      const communicationOfficers = await tx.user.findMany({
+        where: { 
+          role: { name: 'FINANCIAL_OFFICER' },
+          isActive: true 
+        },
+        select: { id: true }
+      });
+      
+      const app = await tx.businessApplication.findUnique({ 
+        where: { id: applicationId },
+        select: { applicationNumber: true, proposedBusinessName: true }
+      });
+
+      for (const officer of communicationOfficers) {
+        await createNotification({
+          recipientId: officer.id,
+          title: 'Gamaaggamni Xumurameera',
+          message: `Iyyatni ${app.applicationNumber} (${app.proposedBusinessName}) Waajira lamaan irraa gamaaggama xumureera. Murtee dhumaa kennaa.`,
+          type: NOTIFICATION_TYPE.REVIEW_COMPLETED,
+          applicationId,
+          tx
+        });
+      }
     }
 
     await writeAuditLogInTransaction(tx, {
@@ -106,22 +132,11 @@ async function approvePermission(permissionId, officerId, { reviewComment }, ipA
       entityType: 'BusinessPermission',
       entityId: parseInt(permissionId, 10),
       previousValue: { status: permission.status },
-      newValue: { status: PERMISSION_STATUS.APPROVED, applicationStatus: APPLICATION_STATUS.LANGUAGE_REVIEW_PENDING },
+      newValue: { status: PERMISSION_STATUS.APPROVED, reviewComment },
       ipAddress,
     });
 
     return updatedPerm;
-  });
-
-  // Notify applicant
-  const app = await prisma.businessApplication.findUnique({ where: { id: applicationId } });
-  await createNotification({
-    recipientId: app.applicantId,
-    title: 'Hayyamni Mirkana\'e',
-    message: `Iyyatni kee ${app.applicationNumber} hayyama faayinaansii argateera. Haala afaan Oromoo ammaan ilaalama jira.`,
-    type: NOTIFICATION_TYPE.PERMISSION_APPROVED,
-    relatedEntityId: parseInt(permissionId, 10),
-    applicationId,
   });
 
   return result;
@@ -150,10 +165,50 @@ async function rejectPermission(permissionId, officerId, { reviewComment }, ipAd
       },
     });
 
+    // Update application commercialStatus
     await tx.businessApplication.update({
       where: { id: applicationId },
-      data: { status: APPLICATION_STATUS.PERMISSION_REJECTED },
+      data: { commercialStatus: 'REJECTED', commercialComment: reviewComment, commercialReviewedAt: new Date() },
     });
+
+    // Check if language review is also completed
+    const languageReview = await tx.languageReview.findUnique({ where: { applicationId } });
+    const bothReviewsComplete = languageReview && 
+      (languageReview.status === LANGUAGE_REVIEW_STATUS.APPROVED || 
+       languageReview.status === LANGUAGE_REVIEW_STATUS.REJECTED);
+
+    if (bothReviewsComplete) {
+      // Both reviews done - send back to Communication for final decision
+      await tx.businessApplication.update({
+        where: { id: applicationId },
+        data: { status: APPLICATION_STATUS.REVIEWS_COMPLETED },
+      });
+
+      // Notify all communication officers
+      const communicationOfficers = await tx.user.findMany({
+        where: { 
+          role: { name: 'FINANCIAL_OFFICER' },
+          isActive: true 
+        },
+        select: { id: true }
+      });
+      
+      const app = await tx.businessApplication.findUnique({ 
+        where: { id: applicationId },
+        select: { applicationNumber: true, proposedBusinessName: true }
+      });
+
+      for (const officer of communicationOfficers) {
+        await createNotification({
+          recipientId: officer.id,
+          title: 'Gamaaggamni Xumurameera',
+          message: `Iyyatni ${app.applicationNumber} (${app.proposedBusinessName}) Waajira lamaan irraa gamaaggama xumureera. Murtee dhumaa kennaa.`,
+          type: NOTIFICATION_TYPE.REVIEW_COMPLETED,
+          applicationId,
+          tx
+        });
+      }
+    }
 
     await writeAuditLogInTransaction(tx, {
       actorUserId: officerId,
@@ -164,16 +219,6 @@ async function rejectPermission(permissionId, officerId, { reviewComment }, ipAd
       newValue: { status: PERMISSION_STATUS.REJECTED, reviewComment },
       ipAddress,
     });
-  });
-
-  const app = await prisma.businessApplication.findUnique({ where: { id: applicationId } });
-  await createNotification({
-    recipientId: app.applicantId,
-    title: 'Hayyamni Dide',
-    message: `Iyyatni kee ${app.applicationNumber} hayyama faayinaansii argachuu dideera. ${reviewComment || ''}`,
-    type: NOTIFICATION_TYPE.PERMISSION_REJECTED,
-    relatedEntityId: parseInt(permissionId, 10),
-    applicationId,
   });
 
   return await getPermission(permissionId);

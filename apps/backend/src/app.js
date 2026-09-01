@@ -82,13 +82,13 @@ app.use('/api/public', publicRoutes);
 // Admin
 app.use('/api/admin', adminRoutes);
 
-// Communication Biro (FINANCIAL_OFFICER)
+// Waajira Kominikeeshinii (FINANCIAL_OFFICER)
 app.use('/api/communication', communicationRoutes);
 
-// Addaf Turizm Biro (LANGUAGE_OFFICER)
+// Waajira Aadaaf Turizimii (LANGUAGE_OFFICER)
 app.use('/api/turizm', turizmRoutes);
 
-// Commercial Office (SENIOR_OFFICER)
+// Waajira Daldaala (SENIOR_OFFICER)
 app.use('/api/commercial', commercialRoutes);
 
 // Settings

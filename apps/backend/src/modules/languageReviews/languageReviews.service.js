@@ -65,17 +65,10 @@ async function getLanguageReview(reviewId) {
 }
 
 /**
- * Final approval — digitally signs.
- * Implements spec §12 transaction:
- * 1. Validate permission approved + correct status
- * 2. Create certificate + QR
- * 3. Insert registry entry
- * 4. Update application → APPROVED
- * 5. Create notification
- * 6. Create audit log
- * Rollback on any failure.
+ * Approve language review (new parallel workflow)
+ * No longer requires permission to be APPROVED first - both offices review independently
  */
-async function approveLanguageReview(reviewId, officerId, { reviewComment }, ipAddress) {
+async function approveLanguageReview(reviewId, officerId, { reviewComment, suggestedBusinessName }, ipAddress) {
   const review = await getLanguageReview(reviewId);
 
   // State machine guard
@@ -85,19 +78,8 @@ async function approveLanguageReview(reviewId, officerId, { reviewComment }, ipA
     throw err;
   }
 
-  // Permission must be APPROVED — explicit check per spec §12
-  if (!review.application.permission || review.application.permission.status !== PERMISSION_STATUS.APPROVED) {
-    const err = new Error('Hayyama faayinaansii mirkanaa\'e malee maqaa mirkaneessuu hin danda\'amu.');
-    err.status = 400;
-    throw err;
-  }
-
   const applicationId = review.applicationId;
   const application = review.application;
-
-  // Generate unique approval number
-  const approvalNumber = `CERT-${new Date().getFullYear()}-${uuidv4().replace(/-/g, '').substring(0, 8).toUpperCase()}`;
-  const qrPayloadUrl = `${env.PUBLIC_BASE_URL}/api/public/certificates/verify/${approvalNumber}`;
 
   const result = await prisma.$transaction(async (tx) => {
     // Update language review
@@ -111,76 +93,87 @@ async function approveLanguageReview(reviewId, officerId, { reviewComment }, ipA
       },
     });
 
-    // Update application status
+    // Update application turizmStatus and optionally update business name
+    const updateData = { 
+      turizmStatus: 'APPROVED', 
+      turizmComment: reviewComment, 
+      turizmReviewedAt: new Date() 
+    };
+    
+    // If language officer suggested a corrected name, update it
+    if (suggestedBusinessName && suggestedBusinessName.trim()) {
+      updateData.proposedBusinessName = suggestedBusinessName.trim();
+      // Also add note to comment about name correction
+      updateData.turizmComment = reviewComment + 
+        (reviewComment ? '\n\n' : '') + 
+        `[Maqaan sirreeffameera: "${application.proposedBusinessName}" → "${suggestedBusinessName}"]`;
+    }
+    
     await tx.businessApplication.update({
       where: { id: applicationId },
-      data: { status: APPLICATION_STATUS.APPROVED },
+      data: updateData,
     });
 
-    // Create certificate (immutable after creation)
-    const certificate = await tx.certificate.create({
-      data: {
-        applicationId,
-        approvalNumber,
-        issuedById: officerId,
-        issuedAt: new Date(),
-        qrPayloadUrl,
-        isValid: true,
-      },
-    });
+    // Check if commercial/permission review is also completed
+    const permission = await tx.businessPermission.findUnique({ where: { applicationId } });
+    const bothReviewsComplete = permission && 
+      (permission.status === PERMISSION_STATUS.APPROVED || 
+       permission.status === PERMISSION_STATUS.REJECTED);
 
-    // Insert into business_name_registry
-    await tx.businessNameRegistry.create({
-      data: {
-        businessName: application.proposedBusinessName,
-        normalizedBusinessName: application.normalizedBusinessName,
-        source: REGISTRY_SOURCE.NEW_APPROVAL,
-        applicationId,
-        approvalId: certificate.id,
-        isActive: true,
-      },
-    });
+    if (bothReviewsComplete) {
+      // Both reviews done - send back to Communication for final decision
+      await tx.businessApplication.update({
+        where: { id: applicationId },
+        data: { status: APPLICATION_STATUS.REVIEWS_COMPLETED },
+      });
+
+      // Notify all communication officers
+      const communicationOfficers = await tx.user.findMany({
+        where: { 
+          role: { name: 'FINANCIAL_OFFICER' },
+          isActive: true 
+        },
+        select: { id: true }
+      });
+      
+      const app = await tx.businessApplication.findUnique({ 
+        where: { id: applicationId },
+        select: { applicationNumber: true, proposedBusinessName: true }
+      });
+
+      for (const officer of communicationOfficers) {
+        await createNotification({
+          recipientId: officer.id,
+          title: 'Gamaaggamni Xumurameera',
+          message: `Iyyatni ${app.applicationNumber} (${app.proposedBusinessName}) Waajira lamaan irraa gamaaggama xumureera. Murtee dhumaa kennaa.`,
+          type: NOTIFICATION_TYPE.REVIEW_COMPLETED,
+          applicationId,
+          tx
+        });
+      }
+    }
 
     // Audit log
     await writeAuditLogInTransaction(tx, {
       actorUserId: officerId,
-      action: 'LANGUAGE_APPROVED_FINAL',
+      action: 'LANGUAGE_REVIEW_APPROVED',
       entityType: 'LanguageReview',
       entityId: parseInt(reviewId, 10),
       previousValue: { status: review.status },
       newValue: {
         status: LANGUAGE_REVIEW_STATUS.APPROVED,
-        applicationStatus: APPLICATION_STATUS.APPROVED,
-        approvalNumber,
-        certificateId: certificate.id,
+        reviewComment,
       },
       ipAddress,
     });
 
-    return { certificate, approvalNumber };
-  });
-
-  // Notify applicant
-  await createNotification({
-    recipientId: application.applicantId,
-    title: 'Maqaan Daldalaa Mirkana\'e!',
-    message: `Baga gammadde! Maqaan daldalaa kee "${application.proposedBusinessName}" mirkana\'e. Lakkoofsa raggaasisaa: ${approvalNumber}`,
-    type: NOTIFICATION_TYPE.APPLICATION_APPROVED,
-    applicationId,
-  });
-
-  await createNotification({
-    recipientId: application.applicantId,
-    title: 'Waraqaan Ragaa Qophaa\'e',
-    message: `Waraqaan ragaa maqaa daldalaa kee kee buufachuu ni dandeessa. Lakkoofsa: ${approvalNumber}`,
-    type: NOTIFICATION_TYPE.CERTIFICATE_READY,
-    applicationId,
+    return { success: true };
   });
 
   return result;
 }
 
-async function rejectLanguageReview(reviewId, officerId, { reviewComment }, ipAddress) {
+async function rejectLanguageReview(reviewId, officerId, { reviewComment, suggestedBusinessName }, ipAddress) {
   const review = await getLanguageReview(reviewId);
 
   if (review.status !== LANGUAGE_REVIEW_STATUS.PENDING && review.status !== LANGUAGE_REVIEW_STATUS.CORRECTION_REQUIRED) {
@@ -189,13 +182,8 @@ async function rejectLanguageReview(reviewId, officerId, { reviewComment }, ipAd
     throw err;
   }
 
-  if (!review.application.permission || review.application.permission.status !== PERMISSION_STATUS.APPROVED) {
-    const err = new Error('Hayyama faayinaansii mirkanaa\'e malee maqaa diduu hin danda\'amu.');
-    err.status = 400;
-    throw err;
-  }
-
   const applicationId = review.applicationId;
+  const application = review.application;
 
   await prisma.$transaction(async (tx) => {
     await tx.languageReview.update({
@@ -208,10 +196,57 @@ async function rejectLanguageReview(reviewId, officerId, { reviewComment }, ipAd
       },
     });
 
+    // Update application turizmStatus and optionally suggest corrected name in comment
+    let comment = reviewComment;
+    if (suggestedBusinessName && suggestedBusinessName.trim()) {
+      comment = reviewComment + 
+        (reviewComment ? '\n\n' : '') + 
+        `[Maqaa sirreeffamuu danda'u: "${suggestedBusinessName}"]`;
+    }
+    
     await tx.businessApplication.update({
       where: { id: applicationId },
-      data: { status: APPLICATION_STATUS.LANGUAGE_REJECTED },
+      data: { turizmStatus: 'REJECTED', turizmComment: comment, turizmReviewedAt: new Date() },
     });
+
+    // Check if commercial/permission review is also completed
+    const permission = await tx.businessPermission.findUnique({ where: { applicationId } });
+    const bothReviewsComplete = permission && 
+      (permission.status === PERMISSION_STATUS.APPROVED || 
+       permission.status === PERMISSION_STATUS.REJECTED);
+
+    if (bothReviewsComplete) {
+      // Both reviews done - send back to Communication for final decision
+      await tx.businessApplication.update({
+        where: { id: applicationId },
+        data: { status: APPLICATION_STATUS.REVIEWS_COMPLETED },
+      });
+
+      // Notify all communication officers
+      const communicationOfficers = await tx.user.findMany({
+        where: { 
+          role: { name: 'FINANCIAL_OFFICER' },
+          isActive: true 
+        },
+        select: { id: true }
+      });
+      
+      const app = await tx.businessApplication.findUnique({ 
+        where: { id: applicationId },
+        select: { applicationNumber: true, proposedBusinessName: true }
+      });
+
+      for (const officer of communicationOfficers) {
+        await createNotification({
+          recipientId: officer.id,
+          title: 'Gamaaggamni Xumurameera',
+          message: `Iyyatni ${app.applicationNumber} (${app.proposedBusinessName}) Waajira lamaan irraa gamaaggama xumureera. Murtee dhumaa kennaa.`,
+          type: NOTIFICATION_TYPE.REVIEW_COMPLETED,
+          applicationId,
+          tx
+        });
+      }
+    }
 
     await writeAuditLogInTransaction(tx, {
       actorUserId: officerId,
@@ -222,15 +257,6 @@ async function rejectLanguageReview(reviewId, officerId, { reviewComment }, ipAd
       newValue: { status: LANGUAGE_REVIEW_STATUS.REJECTED, reviewComment },
       ipAddress,
     });
-  });
-
-  const app = await prisma.businessApplication.findUnique({ where: { id: applicationId } });
-  await createNotification({
-    recipientId: app.applicantId,
-    title: 'Maqaan Daldalaa Dide',
-    message: `Iyyatni kee maqaa daldalaa dide. ${reviewComment || ''}`,
-    type: NOTIFICATION_TYPE.LANGUAGE_REJECTED,
-    applicationId,
   });
 
   return await getLanguageReview(reviewId);

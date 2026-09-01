@@ -24,8 +24,9 @@ function generateTokens(userId) {
 
 /** Register a new BUSINESS_OWNER */
 async function register({ fullName, email, phoneNumber, password, nationalIdRef }, ipAddress) {
+  const normalizedEmail = email.trim().toLowerCase();
   // Check duplicate email
-  const existing = await prisma.user.findUnique({ where: { email } });
+  const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
   if (existing) {
     const err = new Error('Imeeliin kun duraan galmaa\'ee jira.');
     err.status = 409;
@@ -50,7 +51,7 @@ async function register({ fullName, email, phoneNumber, password, nationalIdRef 
   const user = await prisma.user.create({
     data: {
       fullName,
-      email,
+      email: normalizedEmail,
       phoneNumber: phoneNumber || null,
       nationalIdRef: nationalIdRef || null,
       passwordHash,
@@ -59,14 +60,23 @@ async function register({ fullName, email, phoneNumber, password, nationalIdRef 
     include: { role: true },
   });
 
-  await writeAuditLog({
-    actorUserId: user.id,
-    action: 'USER_REGISTERED',
-    entityType: 'User',
-    entityId: user.id,
-    newValue: { email, fullName },
-    ipAddress,
-  });
+  // Auto-verify national ID on signup
+  if (nationalIdRef) {
+    try {
+      const result = await nationalIdService.verifyIdentity({ nationalIdNumber: nationalIdRef, userId: user.id });
+      await prisma.identityVerification.create({
+        data: {
+          userId: user.id,
+          provider: 'MOCK',
+          status: result.status,
+          verifiedAt: result.status === 'VERIFIED' ? new Date() : null,
+          referenceId: result.referenceId || null,
+        },
+      });
+    } catch (e) {
+      console.error('Auto-verification failed during signup:', e);
+    }
+  }
 
   const { accessToken, refreshToken } = generateTokens(user.id);
 
@@ -84,8 +94,9 @@ async function register({ fullName, email, phoneNumber, password, nationalIdRef 
 
 /** Login */
 async function login({ email, password }, ipAddress) {
+  const normalizedEmail = email.trim().toLowerCase();
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: normalizedEmail },
     include: { role: true },
   });
 
@@ -94,7 +105,7 @@ async function login({ email, password }, ipAddress) {
       actorUserId: null,
       action: 'LOGIN_FAILED',
       entityType: 'User',
-      newValue: { email, reason: user ? 'inactive' : 'not_found' },
+      newValue: { email: normalizedEmail, reason: user ? 'inactive' : 'not_found' },
       ipAddress,
     });
     const err = new Error('Imeeli ykn jecha icciitii sirrii miti.');

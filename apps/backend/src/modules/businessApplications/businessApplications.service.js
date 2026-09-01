@@ -23,14 +23,16 @@ async function createApplication({ applicantId, proposedBusinessName, businessCa
   const normalized = normalizeBusinessName(proposedBusinessName);
   const appNumber = generateApplicationNumber();
 
-  // Verify category exists
-  const category = await prisma.businessCategory.findFirst({
-    where: { id: parseInt(businessCategoryId, 10), isActive: true },
-  });
-  if (!category) {
-    const err = new Error('Gosa daldalaa filame hin argamne.');
-    err.status = 404;
-    throw err;
+  // Verify category exists (skip if null - "Other" option)
+  if (businessCategoryId !== null && businessCategoryId !== undefined) {
+    const category = await prisma.businessCategory.findFirst({
+      where: { id: parseInt(businessCategoryId, 10), isActive: true },
+    });
+    if (!category) {
+      const err = new Error('Gosa daldalaa filame hin argamne.');
+      err.status = 404;
+      throw err;
+    }
   }
 
   const application = await repo.create({
@@ -38,7 +40,7 @@ async function createApplication({ applicantId, proposedBusinessName, businessCa
     applicantId,
     proposedBusinessName: proposedBusinessName.trim(),
     normalizedBusinessName: normalized,
-    businessCategoryId: parseInt(businessCategoryId, 10),
+    businessCategoryId: businessCategoryId ? parseInt(businessCategoryId, 10) : null,
     businessDescription,
     businessAddress,
     status: APPLICATION_STATUS.DRAFT,
@@ -73,9 +75,34 @@ async function submitApplication(applicationId, applicantId, ipAddress) {
   }
 
   // Check identity verified
-  const verified = await prisma.identityVerification.findFirst({
+  let verified = await prisma.identityVerification.findFirst({
     where: { userId: applicantId, status: 'VERIFIED' },
   });
+  if (!verified) {
+    const user = await prisma.user.findUnique({ where: { id: applicantId } });
+    if (user && user.nationalIdRef) {
+      try {
+        const nationalIdService = require('../auth/nationalIdService');
+        const result = await nationalIdService.verifyIdentity({ nationalIdNumber: user.nationalIdRef, userId: applicantId, applicationId });
+        await prisma.identityVerification.create({
+          data: {
+            userId: applicantId,
+            applicationId,
+            provider: 'MOCK',
+            status: result.status,
+            verifiedAt: result.status === 'VERIFIED' ? new Date() : null,
+            referenceId: result.referenceId || null,
+          },
+        });
+        if (result.status === 'VERIFIED') {
+          verified = true;
+        }
+      } catch (e) {
+        console.error('Auto-verification failed during submit:', e);
+      }
+    }
+  }
+
   if (!verified) {
     const err = new Error('Eenyummaa mirkaneessuu barbaachisaa dha. Dursitee eenyummaa kee mirkaneessi.');
     err.status = 400;
@@ -107,21 +134,14 @@ async function submitApplication(applicationId, applicantId, ipAddress) {
     return { application: updated, validationResult };
   }
 
-  // Transition to PERMISSION_PENDING — create permission record
+  // Transition to SUBMITTED
   const updated = await prisma.$transaction(async (tx) => {
     const app = await tx.businessApplication.update({
       where: { id: applicationId },
       data: {
-        status: APPLICATION_STATUS.PERMISSION_PENDING,
+        status: APPLICATION_STATUS.SUBMITTED,
         submittedAt: new Date(),
         normalizedBusinessName: validationResult.normalizedName,
-      },
-    });
-
-    await tx.businessPermission.create({
-      data: {
-        applicationId,
-        status: PERMISSION_STATUS.PENDING,
       },
     });
 
@@ -131,7 +151,7 @@ async function submitApplication(applicationId, applicantId, ipAddress) {
       entityType: 'BusinessApplication',
       entityId: applicationId,
       previousValue: { status: prevStatus },
-      newValue: { status: APPLICATION_STATUS.PERMISSION_PENDING },
+      newValue: { status: APPLICATION_STATUS.SUBMITTED },
       ipAddress,
     });
 
@@ -306,7 +326,9 @@ async function updateApplication(applicationId, applicantId, data, ipAddress) {
     updateData.proposedBusinessName = data.proposedBusinessName.trim();
     updateData.normalizedBusinessName = normalizeBusinessName(data.proposedBusinessName);
   }
-  if (data.businessCategoryId) updateData.businessCategoryId = parseInt(data.businessCategoryId, 10);
+  if (data.businessCategoryId !== undefined) {
+    updateData.businessCategoryId = data.businessCategoryId ? parseInt(data.businessCategoryId, 10) : null;
+  }
   if (data.businessDescription) updateData.businessDescription = data.businessDescription;
   if (data.businessAddress) updateData.businessAddress = data.businessAddress;
 
@@ -349,6 +371,9 @@ async function listCorrections(userId) {
         in: [
           'PERMISSION_CORRECTION_REQUIRED',
           'LANGUAGE_CORRECTION_REQUIRED',
+          'PERMISSION_REJECTED',
+          'LANGUAGE_REJECTED',
+          'REJECTED', // Final rejection by Communication Officer
         ],
       },
     },
@@ -360,18 +385,34 @@ async function listCorrections(userId) {
     orderBy: { updatedAt: 'desc' },
   });
 
-  return apps.map(app => ({
-    id: app.id.toString(),
-    applicationNumber: app.applicationNumber,
-    businessName: app.proposedBusinessName,
-    category: app.businessCategory?.name || '',
-    status: app.status,
-    correctionNote:
-      app.permission?.reviewComment ||
-      app.languageReview?.reviewComment ||
-      '',
-    updatedAt: app.updatedAt,
-  }));
+  return apps.map(app => {
+    const isRejected = app.status === 'PERMISSION_REJECTED' || 
+                       app.status === 'LANGUAGE_REJECTED' ||
+                       app.status === 'REJECTED'; // Final rejection
+    
+    // Get rejection reason - prioritize finalDecisionReason for final rejections
+    let correctionNote = '';
+    if (app.status === 'REJECTED') {
+      correctionNote = app.finalDecisionReason || '';
+    } else if (app.status === 'PERMISSION_REJECTED') {
+      correctionNote = app.permission?.reviewComment || '';
+    } else if (app.status === 'LANGUAGE_REJECTED') {
+      correctionNote = app.languageReview?.reviewComment || '';
+    } else {
+      correctionNote = app.permission?.reviewComment || app.languageReview?.reviewComment || '';
+    }
+    
+    return {
+      id: app.id.toString(),
+      applicationNumber: app.applicationNumber,
+      businessName: app.proposedBusinessName,
+      category: app.businessCategory?.name || '',
+      status: app.status,
+      isRejected,
+      correctionNote,
+      updatedAt: app.updatedAt,
+    };
+  });
 }
 
 module.exports = {

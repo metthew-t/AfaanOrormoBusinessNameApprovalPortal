@@ -6,8 +6,16 @@ const prisma = require('../../config/database');
 const APPLICATION_INCLUDE = {
   applicant: { select: { id: true, fullName: true, email: true, phoneNumber: true } },
   businessCategory: { select: { id: true, name: true } },
-  permission: true,
-  languageReview: true,
+  permission: {
+    include: {
+      reviewer: { select: { id: true, fullName: true, email: true } }
+    }
+  },
+  languageReview: {
+    include: {
+      reviewer: { select: { id: true, fullName: true, email: true } }
+    }
+  },
   documents: true,
   certificate: true,
 };
